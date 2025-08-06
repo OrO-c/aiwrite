@@ -11,6 +11,8 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
 import android.view.LayoutInflater
+import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
@@ -26,6 +28,20 @@ class FloatingWindowService : Service() {
     companion object {
         private const val NOTIFICATION_ID = 1001
         private const val CHANNEL_ID = "floating_service"
+        
+        fun start(context: Context) {
+            val intent = Intent(context, FloatingWindowService::class.java).apply {
+                action = "SHOW_FLOATING_BUTTON"
+            }
+            context.startForegroundService(intent)
+        }
+        
+        fun stop(context: Context) {
+            val intent = Intent(context, FloatingWindowService::class.java).apply {
+                action = "STOP_SERVICE"
+            }
+            context.startService(intent)
+        }
     }
     
     private var windowManager: WindowManager? = null
@@ -197,22 +213,6 @@ class FloatingWindowService : Service() {
             startActivity(intent)
         } catch (e: Exception) {
             // Handle error
-        }
-    }
-    
-    companion object {
-        fun start(context: Context) {
-            val intent = Intent(context, FloatingWindowService::class.java).apply {
-                action = "SHOW_FLOATING_BUTTON"
-            }
-            context.startForegroundService(intent)
-        }
-        
-        fun stop(context: Context) {
-            val intent = Intent(context, FloatingWindowService::class.java).apply {
-                action = "STOP_SERVICE"
-            }
-            context.startService(intent)
         }
     }
 }

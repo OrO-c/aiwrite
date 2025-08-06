@@ -16,7 +16,7 @@
         android:layout_height="24dp"
         android:layout_gravity="center"
         android:src="@drawable/ic_edit"
-        android:tint="?attr/colorOnPrimaryContainer"
+        app:tint="?attr/colorOnPrimaryContainer"
         android:contentDescription="@string/app_name" />
 
 </com.google.android.material.card.MaterialCardView>

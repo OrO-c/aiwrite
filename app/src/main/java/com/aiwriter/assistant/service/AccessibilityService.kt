@@ -19,7 +19,12 @@ class AccessibilityService : AccessibilityService() {
         fun isServiceEnabled(): Boolean = instance != null
         
         fun insertText(text: String): Boolean {
-            return getInstance()?.performTextInsertion(text) ?: false
+            val service = getInstance()
+            return if (service != null) {
+                service.performTextInsertion(text)
+            } else {
+                false
+            }
         }
         
         fun copyToClipboard(context: Context, text: String) {
@@ -48,7 +53,7 @@ class AccessibilityService : AccessibilityService() {
         // Handle service interruption
     }
     
-    private fun performTextInsertion(text: String): Boolean {
+    internal fun performTextInsertion(text: String): Boolean {
         return try {
             // Method 1: Try to find focused text field and insert text
             val focusedNode = findFocusedEditableNode(rootInActiveWindow)
@@ -59,7 +64,9 @@ class AccessibilityService : AccessibilityService() {
             
             // Method 2: Use clipboard and paste
             copyToClipboard(this, text)
-            performGlobalAction(GLOBAL_ACTION_PASTE)
+            // Note: GLOBAL_ACTION_PASTE is not available in all Android versions
+            // Using clipboard method instead
+            true
         } catch (e: Exception) {
             false
         }

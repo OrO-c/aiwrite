@@ -1,5 +1,6 @@
 package com.aiwriter.assistant.ui.main
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -7,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -15,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aiwriter.assistant.data.model.WritingPreset
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PresetsScreen(
     onNavigateBack: () -> Unit,
@@ -119,6 +121,7 @@ private fun PresetCard(
                         )
                         if (preset.isDefault) {
                             Spacer(modifier = Modifier.width(8.dp))
+                            @OptIn(ExperimentalMaterial3Api::class)
                             Badge { Text("默认") }
                         }
                     }

@@ -34,11 +34,15 @@ class WritingTileService : TileService() {
         if (preferences.isSetupCompleted && preferences.workMode == WorkMode.TILE_CLIPBOARD) {
             tile.state = Tile.STATE_ACTIVE
             tile.label = "AI 写作"
-            tile.subtitle = "点击生成文本"
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                tile.subtitle = "点击生成文本"
+            }
         } else {
             tile.state = Tile.STATE_INACTIVE
             tile.label = "AI 写作"
-            tile.subtitle = "未配置"
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                tile.subtitle = "未配置"
+            }
         }
         
         tile.updateTile()
@@ -52,7 +56,7 @@ class WritingTileService : TileService() {
         }
         
         try {
-            startActivityAndCollapse(intent)
+            startActivity(intent)
         } catch (e: Exception) {
             // Handle error - maybe show a toast or notification
         }

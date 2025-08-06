@@ -11,6 +11,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,11 +26,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Input
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -122,8 +126,9 @@ fun FloatingWritingInterface(
                         LoadingState()
                     }
                     uiState.generatedText != null -> {
+                        val generatedText = uiState.generatedText!!
                         GeneratedTextDisplay(
-                            generatedText = uiState.generatedText,
+                            generatedText = generatedText,
                             mode = mode,
                             onCopyText = { text ->
                                 copyToClipboard(context, text)
@@ -194,24 +199,27 @@ private fun InputInterface(
         // Preset selection
         var expanded by remember { mutableStateOf(false) }
         
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
+        Box {
             OutlinedTextField(
                 value = currentPreset,
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("选择预设") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = { 
+                    Icon(
+                        if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = "展开"
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .menuAnchor()
+                    .clickable { expanded = !expanded }
             )
             
-            ExposedDropdownMenu(
+            DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth()
             ) {
                 presets.forEach { preset ->
                     DropdownMenuItem(
