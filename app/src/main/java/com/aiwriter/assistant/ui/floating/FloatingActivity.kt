@@ -26,11 +26,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Input
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -123,8 +126,9 @@ fun FloatingWritingInterface(
                         LoadingState()
                     }
                     uiState.generatedText != null -> {
+                        val generatedText = uiState.generatedText
                         GeneratedTextDisplay(
-                            generatedText = uiState.generatedText,
+                            generatedText = generatedText,
                             mode = mode,
                             onCopyText = { text ->
                                 copyToClipboard(context, text)
@@ -193,8 +197,6 @@ private fun InputInterface(
 ) {
     Column {
         // Preset selection
-        var expanded by remember { mutableStateOf(false) }
-        
         var expanded by remember { mutableStateOf(false) }
         
         Box {

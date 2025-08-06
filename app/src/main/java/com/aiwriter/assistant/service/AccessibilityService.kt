@@ -19,7 +19,9 @@ class AccessibilityService : AccessibilityService() {
         fun isServiceEnabled(): Boolean = instance != null
         
         fun insertText(text: String): Boolean {
-            return getInstance()?.performTextInsertion(text) ?: false
+            return getInstance()?.let { service ->
+                service.performTextInsertion(text)
+            } ?: false
         }
         
         fun copyToClipboard(context: Context, text: String) {
