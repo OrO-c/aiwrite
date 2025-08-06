@@ -15,3 +15,12 @@
 local.properties
 *.apk
 *.aab
+
+# 签名文件
+*.keystore
+*.jks
+keystore.properties
+
+# 临时构建文件
+release-notes.md
+apk_scan_results.txt
