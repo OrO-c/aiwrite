@@ -53,7 +53,7 @@ class AccessibilityService : AccessibilityService() {
         // Handle service interruption
     }
     
-    private fun doInsertText(text: String): Boolean {
+    internal fun doInsertText(text: String): Boolean {
         return try {
             // Method 1: Try to find focused text field and insert text
             val focusedNode = findFocusedEditableNode(rootInActiveWindow)
