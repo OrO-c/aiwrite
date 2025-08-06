@@ -126,7 +126,7 @@ fun FloatingWritingInterface(
                         LoadingState()
                     }
                     uiState.generatedText != null -> {
-                        val generatedText = uiState.generatedText
+                        val generatedText = uiState.generatedText!!
                         GeneratedTextDisplay(
                             generatedText = generatedText,
                             mode = mode,

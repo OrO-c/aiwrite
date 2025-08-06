@@ -121,6 +121,7 @@ private fun PresetCard(
                         )
                         if (preset.isDefault) {
                             Spacer(modifier = Modifier.width(8.dp))
+                            @OptIn(ExperimentalMaterial3Api::class)
                             Badge { Text("默认") }
                         }
                     }
