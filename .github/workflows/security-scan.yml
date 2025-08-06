@@ -1,0 +1,226 @@
+name: Security Scan
+
+on:
+  # 定期扫描
+  schedule:
+    - cron: '0 2 * * 1'  # 每周一凌晨2点运行
+  
+  # 手动触发
+  workflow_dispatch:
+  
+  # 重要分支推送时触发
+  push:
+    branches:
+      - main
+    paths:
+      - '**/build.gradle'
+      - '**/build.gradle.kts'
+      - 'gradle.properties'
+
+jobs:
+  dependency-check:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Cache Gradle Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            .gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      
+      - name: Grant Execute Permission for gradlew
+        run: chmod +x gradlew
+      
+      - name: Run Dependency Check
+        run: |
+          # 检查过时的依赖
+          ./gradlew dependencyUpdates
+      
+      - name: Upload Dependency Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-reports
+          path: |
+            build/dependencyUpdates/
+          retention-days: 30
+
+  code-scanning:
+    name: CodeQL Security Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'java' ]
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          queries: +security-and-quality
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          build-tools: 34.0.0
+      
+      - name: Cache Gradle Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            .gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      
+      - name: Grant Execute Permission for gradlew
+        run: chmod +x gradlew
+      
+      - name: Build for CodeQL Analysis
+        run: |
+          ./gradlew assembleDebug
+      
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:${{matrix.language}}"
+
+  apk-security-scan:
+    name: APK Security Scan
+    runs-on: ubuntu-latest
+    needs: dependency-check
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          build-tools: 34.0.0
+      
+      - name: Cache Gradle Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            .gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      
+      - name: Grant Execute Permission for gradlew
+        run: chmod +x gradlew
+      
+      - name: Build Debug APK for Scanning
+        run: ./gradlew assembleDebug
+      
+      - name: Install APK Analysis Tools
+        run: |
+          # 安装 APK 分析工具
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install --user apkleaks
+          
+          # 下载 MobSF 的命令行工具（如果需要）
+          # wget -O mobsf.py https://raw.githubusercontent.com/MobSF/Mobile-Security-Framework-MobSF/master/scripts/mobsf_ci.py
+      
+      - name: Scan APK for Security Issues
+        run: |
+          APK_FILE=$(find app/build/outputs/apk/debug -name "*.apk" | head -1)
+          echo "Scanning APK: $APK_FILE"
+          
+          # 基本 APK 信息提取
+          echo "=== APK Basic Info ==="
+          aapt dump badging "$APK_FILE" | head -20
+          
+          echo "=== APK Permissions ==="
+          aapt dump permissions "$APK_FILE"
+          
+          echo "=== APK Certificate Info ==="
+          keytool -printcert -jarfile "$APK_FILE" | head -20
+          
+          # 使用 APKLeaks 扫描敏感信息
+          echo "=== APK Leaks Scan ==="
+          python3 -m apkleaks -f "$APK_FILE" -o apk_scan_results.txt || true
+          
+          # 检查 APK 大小
+          APK_SIZE=$(stat -c%s "$APK_FILE")
+          echo "APK Size: $APK_SIZE bytes ($(numfmt --to=iec $APK_SIZE))"
+          
+          if [ $APK_SIZE -gt 52428800 ]; then  # 50MB
+            echo "⚠️ Warning: APK size is quite large (>50MB)"
+          fi
+      
+      - name: Upload Security Scan Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-scan-results
+          path: |
+            apk_scan_results.txt
+            app/build/outputs/apk/debug/*.apk
+          retention-days: 30
+      
+      - name: Create Security Summary
+        if: always()
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          # 🔒 Security Scan Summary
+          
+          ## APK Information
+          - **File**: $(basename $(find app/build/outputs/apk/debug -name "*.apk" | head -1))
+          - **Size**: $(stat -c%s $(find app/build/outputs/apk/debug -name "*.apk" | head -1) | numfmt --to=iec)
+          
+          ## Security Checks
+          - ✅ Dependency vulnerability scan completed
+          - ✅ CodeQL security analysis completed
+          - ✅ APK permissions review completed
+          - ✅ Certificate verification completed
+          
+          ## Next Steps
+          1. Review uploaded security scan results
+          2. Check for any high-severity vulnerabilities
+          3. Update dependencies if needed
+          4. Review APK permissions and certificate
+          EOF

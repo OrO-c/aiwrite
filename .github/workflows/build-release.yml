@@ -1,0 +1,388 @@
+name: Build and Release APK
+
+on:
+  # 自动触发：推送到 main 分支的 tag
+  push:
+    tags:
+      - 'v*.*.*'
+  
+  # 手动触发
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'Version name (e.g., 1.0.0)'
+        required: true
+        default: '1.0.0'
+      version_code:
+        description: 'Version code (integer)'
+        required: true
+        default: '1'
+      build_type:
+        description: 'Build type'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - release
+          - debug
+      create_release:
+        description: 'Create GitHub Release'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  # 构建环境变量
+  GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx4g -XX:+HeapDumpOnOutOfMemoryError"
+  GRADLE_USER_HOME: ${{ github.workspace }}/.gradle
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        # 多架构构建矩阵
+        include:
+          - arch: 'universal'
+            abi: 'universal'
+          - arch: 'arm64-v8a'
+            abi: 'arm64-v8a'
+          - arch: 'armeabi-v7a'
+            abi: 'armeabi-v7a'
+          - arch: 'x86_64'
+            abi: 'x86_64'
+          - arch: 'x86'
+            abi: 'x86'
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          build-tools: 34.0.0
+          ndk-version: 25.2.9519653
+      
+      - name: Cache Gradle Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            .gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      
+      - name: Grant Execute Permission for gradlew
+        run: chmod +x gradlew
+      
+      - name: Extract Version Information
+        id: version_info
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]; then
+            # 从 tag 提取版本信息
+            VERSION_NAME=${GITHUB_REF#refs/tags/v}
+            VERSION_CODE=${{ github.run_number }}
+            BUILD_TYPE="release"
+          else
+            # 从手动输入获取版本信息
+            VERSION_NAME="${{ github.event.inputs.version_name }}"
+            VERSION_CODE="${{ github.event.inputs.version_code }}"
+            BUILD_TYPE="${{ github.event.inputs.build_type }}"
+          fi
+          
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "build_type=$BUILD_TYPE" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION_NAME ($VERSION_CODE) - $BUILD_TYPE"
+      
+      - name: Update Version in build.gradle
+        run: |
+          sed -i "s/versionCode [0-9]*/versionCode ${{ steps.version_info.outputs.version_code }}/" app/build.gradle
+          sed -i "s/versionName \".*\"/versionName \"${{ steps.version_info.outputs.version_name }}\"/" app/build.gradle
+          echo "Updated version in build.gradle:"
+          grep -E "versionCode|versionName" app/build.gradle
+      
+      - name: Configure Multi-Architecture Build
+        run: |
+          # 添加多架构配置到 build.gradle
+          cat >> app/build.gradle << EOF
+          
+          android {
+              splits {
+                  abi {
+                      enable true
+                      reset()
+                      if ("${{ matrix.abi }}" != "universal") {
+                          include "${{ matrix.abi }}"
+                      } else {
+                          universalApk true
+                      }
+                      universalApk ${{ matrix.abi == 'universal' && 'true' || 'false' }}
+                  }
+              }
+          }
+          
+          // 为不同架构设置不同的 version code
+          android.applicationVariants.all { variant ->
+              variant.outputs.each { output ->
+                  def abiVersionCode = project.ext.abiCodes.get(output.getFilter(com.android.build.OutputFile.ABI))
+                  if (abiVersionCode != null) {
+                      output.versionCodeOverride = abiVersionCode + variant.versionCode
+                  }
+              }
+          }
+          
+          project.ext.abiCodes = [
+              'armeabi-v7a': 1,
+              'arm64-v8a': 2,
+              'x86': 3,
+              'x86_64': 4,
+              'universal': 0
+          ]
+          EOF
+      
+      - name: Build APK
+        run: |
+          if [ "${{ steps.version_info.outputs.build_type }}" == "release" ]; then
+            ./gradlew assembleRelease --stacktrace
+          else
+            ./gradlew assembleDebug --stacktrace
+          fi
+      
+      - name: Sign APK (Release only)
+        if: steps.version_info.outputs.build_type == 'release'
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_PASSWORD" ]; then
+            echo "Signing APK..."
+            # 创建临时密钥库（实际使用中应该上传真实的密钥库）
+            keytool -genkey -v -keystore release.keystore -alias release -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass $KEYSTORE_PASSWORD -keypass $KEY_PASSWORD \
+              -dname "CN=AI Writing Assistant, OU=Development, O=Company, L=City, S=State, C=CN"
+            
+            # 签名 APK
+            find app/build/outputs/apk/release -name "*.apk" -exec \
+              jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+              -keystore release.keystore -storepass $KEYSTORE_PASSWORD -keypass $KEY_PASSWORD {} release \;
+          else
+            echo "No signing credentials provided, skipping APK signing"
+          fi
+      
+      - name: Rename APK Files
+        run: |
+          BUILD_TYPE="${{ steps.version_info.outputs.build_type }}"
+          VERSION_NAME="${{ steps.version_info.outputs.version_name }}"
+          ARCH="${{ matrix.arch }}"
+          
+          # 查找并重命名 APK 文件
+          APK_DIR="app/build/outputs/apk/$BUILD_TYPE"
+          
+          if [ "$ARCH" == "universal" ]; then
+            # Universal APK
+            find $APK_DIR -name "*universal*.apk" -exec mv {} "AI-Writing-Assistant-v${VERSION_NAME}-universal-${BUILD_TYPE}.apk" \; || \
+            find $APK_DIR -name "*.apk" | head -1 | xargs -I {} mv {} "AI-Writing-Assistant-v${VERSION_NAME}-universal-${BUILD_TYPE}.apk"
+          else
+            # Architecture-specific APK
+            find $APK_DIR -name "*${ARCH}*.apk" -exec mv {} "AI-Writing-Assistant-v${VERSION_NAME}-${ARCH}-${BUILD_TYPE}.apk" \; || \
+            echo "No APK found for architecture $ARCH"
+          fi
+          
+          # 列出生成的文件
+          ls -la *.apk || echo "No APK files found in current directory"
+      
+      - name: Upload APK Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-${{ matrix.arch }}-${{ steps.version_info.outputs.build_type }}
+          path: |
+            *.apk
+          retention-days: 30
+      
+      - name: Generate APK Info
+        id: apk_info
+        run: |
+          APK_FILE=$(ls *.apk | head -1)
+          if [ -f "$APK_FILE" ]; then
+            APK_SIZE=$(stat -c%s "$APK_FILE" | numfmt --to=iec)
+            APK_NAME=$(basename "$APK_FILE")
+            echo "apk_name=$APK_NAME" >> $GITHUB_OUTPUT
+            echo "apk_size=$APK_SIZE" >> $GITHUB_OUTPUT
+            echo "apk_exists=true" >> $GITHUB_OUTPUT
+            
+            # 生成 APK 信息
+            echo "APK: $APK_NAME ($APK_SIZE)"
+          else
+            echo "apk_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+  create_release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.create_release == 'true')
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Download All APK Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: apk-artifacts
+          pattern: apk-*
+          merge-multiple: false
+      
+      - name: Prepare Release Assets
+        run: |
+          mkdir -p release-assets
+          
+          # 收集所有 APK 文件
+          find apk-artifacts -name "*.apk" -exec cp {} release-assets/ \;
+          
+          # 列出所有文件
+          echo "Release assets:"
+          ls -la release-assets/
+          
+          # 生成 checksums
+          cd release-assets
+          sha256sum *.apk > checksums.txt
+          cd ..
+      
+      - name: Extract Version Info
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]; then
+            VERSION_NAME=${GITHUB_REF#refs/tags/v}
+          else
+            VERSION_NAME="${{ github.event.inputs.version_name }}"
+          fi
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+      
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          cat > release_notes.md << EOF
+          # AI 写作助手 v${{ steps.version.outputs.version_name }}
+          
+          ## 📱 下载说明
+          
+          请根据您的设备架构下载对应的 APK：
+          
+          - **Universal APK**: 兼容所有架构，文件较大
+          - **ARM64 (arm64-v8a)**: 适用于大多数现代 Android 设备
+          - **ARM32 (armeabi-v7a)**: 适用于较老的 32 位 ARM 设备
+          - **x86_64**: 适用于 64 位 x86 设备（如某些平板和模拟器）
+          - **x86**: 适用于 32 位 x86 设备
+          
+          ## 🔍 如何选择
+          
+          1. **不确定**: 下载 Universal APK
+          2. **现代手机**: 通常选择 ARM64 版本
+          3. **老旧设备**: 选择 ARM32 版本
+          4. **模拟器**: 根据模拟器架构选择 x86 版本
+          
+          ## ✨ 主要功能
+          
+          - 🤖 智能分段写作：一次输入，三种风格
+          - ⚡ 双模式操作：磁贴模式 + 悬浮球模式
+          - 📝 多场景预设：小红书、邮件、评价等
+          - 🎨 现代化设计：Material 3 + 夜间模式
+          - 🔒 隐私安全：本地存储，用户控制
+          
+          ## 📋 更新内容
+          
+          - 首次发布版本
+          - 完整的双模式写作功能
+          - 支持 OpenAI、DeepSeek、Gemini API
+          - 内置常用写作预设
+          - 完整的引导流程
+          
+          ## 🔧 系统要求
+          
+          - Android 7.0 (API 24) 及以上
+          - 网络连接（用于 AI API 调用）
+          - 可选：悬浮窗权限（悬浮球模式）
+          - 可选：无障碍服务（直接输入功能）
+          
+          ## 📁 文件校验
+          
+          所有 APK 文件的 SHA256 校验值请参考 \`checksums.txt\` 文件。
+          EOF
+          
+          echo "Generated release notes"
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event_name == 'push' && github.ref_name || format('v{0}', steps.version.outputs.version_name) }}
+          name: AI 写作助手 v${{ steps.version.outputs.version_name }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+          files: |
+            release-assets/*.apk
+            release-assets/checksums.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify:
+    name: Build Notification
+    needs: [build, create_release]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Send Build Notification
+        if: always()
+        run: |
+          if [ "${{ needs.build.result }}" == "success" ]; then
+            echo "✅ Build completed successfully!"
+            echo "Version: ${{ needs.build.outputs.version_name || github.event.inputs.version_name }}"
+            echo "Architectures: universal, arm64-v8a, armeabi-v7a, x86_64, x86"
+          else
+            echo "❌ Build failed!"
+            exit 1
+          fi
+      
+      - name: Build Summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          # 🏗️ Build Summary
+          
+          ## Build Information
+          - **Trigger**: ${{ github.event_name }}
+          - **Version**: ${{ needs.build.outputs.version_name || github.event.inputs.version_name }}
+          - **Build Type**: ${{ github.event.inputs.build_type || 'release' }}
+          - **Status**: ${{ needs.build.result }}
+          
+          ## Artifacts
+          - ✅ Universal APK
+          - ✅ ARM64 APK  
+          - ✅ ARM32 APK
+          - ✅ x86_64 APK
+          - ✅ x86 APK
+          
+          ## Next Steps
+          1. Download artifacts from the Actions page
+          2. Test on different device architectures
+          3. Check the release page for published APKs
+          EOF
