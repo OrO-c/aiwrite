@@ -24,3 +24,14 @@ keystore.properties
 # 临时构建文件
 release-notes.md
 apk_scan_results.txt
+
+# 大文件和下载文件
+*.zip
+*.tar.gz
+*.tar.bz2
+commandlinetools-*.zip
+sdk-tools-*.zip
+
+# 临时目录
+/tmp/
+/temp/
