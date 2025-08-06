@@ -1,12 +1,15 @@
 package com.aiwriter.assistant.data.repository
 
-import com.aiwriter.assistant.data.api.*
+import com.aiwriter.assistant.data.api.ChatCompletionRequest
+import com.aiwriter.assistant.data.api.ChatCompletionResponse
+import com.aiwriter.assistant.data.api.ChatMessage
+import com.aiwriter.assistant.data.api.OpenAIService
 import com.aiwriter.assistant.data.model.ApiConfig
 import com.aiwriter.assistant.data.model.ApiProvider
 import com.aiwriter.assistant.data.model.GeneratedText
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.*
+import java.util.UUID
 
 class AITextRepository {
     

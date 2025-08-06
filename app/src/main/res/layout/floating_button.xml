@@ -6,7 +6,7 @@
     android:layout_height="56dp"
     app:cardCornerRadius="28dp"
     app:cardElevation="8dp"
-    app:cardBackgroundColor="?attr/colorPrimary"
+    app:cardBackgroundColor="?attr/colorPrimaryContainer"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackgroundBorderless">
@@ -16,7 +16,7 @@
         android:layout_height="24dp"
         android:layout_gravity="center"
         android:src="@drawable/ic_edit"
-        android:tint="?attr/colorOnPrimary"
+        android:tint="?attr/colorOnPrimaryContainer"
         android:contentDescription="@string/app_name" />
 
 </com.google.android.material.card.MaterialCardView>
