@@ -198,12 +198,60 @@ app/src/main/java/com/aiwriter/assistant/
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 开启 Pull Request
 
+## 🏗️ 构建和部署
+
+### GitHub Actions CI/CD
+
+本项目配置了完整的 CI/CD 流水线：
+
+- **🚀 自动发布**: 推送版本标签自动构建发布
+- **🔧 多架构支持**: ARM64、ARM32、x86_64、x86、Universal
+- **🔒 自动签名**: 安全的 APK 签名流程
+- **🛡️ 安全扫描**: 定期依赖和安全检查
+
+### 快速发布
+
+```bash
+# 创建版本标签自动触发构建
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+### 手动构建
+
+1. 访问 GitHub Actions 页面
+2. 选择 "Build and Release APK"
+3. 点击 "Run workflow" 并配置参数
+
+详细说明请参考：[GitHub Actions 构建指南](./docs/GITHUB_ACTIONS_GUIDE.md)
+
+## 📦 下载安装
+
+### GitHub Releases
+
+从 [Releases 页面](../../releases) 下载最新版本：
+
+- **Universal APK**: 兼容所有设备（推荐）
+- **ARM64**: 现代 Android 设备
+- **ARM32**: 较老的 Android 设备
+- **x86/x86_64**: 模拟器或特殊设备
+
+### 架构选择指南
+
+| 设备类型 | 推荐架构 | 文件大小 |
+|----------|----------|----------|
+| 不确定 | Universal | 较大 |
+| 现代手机 | ARM64 | 较小 |
+| 老旧手机 | ARM32 | 较小 |
+| 模拟器 | x86/x86_64 | 较小 |
+
 ## 📞 联系方式
 
 如有问题或建议，请通过以下方式联系：
 
 - 提交 [Issue](../../issues)
-- 发送邮件至：[your-email@example.com]
+- 查看 [GitHub Actions 构建指南](./docs/GITHUB_ACTIONS_GUIDE.md)
+- 参考 [APK 签名配置指南](./docs/SIGNING_SETUP.md)
 
 ---
 
