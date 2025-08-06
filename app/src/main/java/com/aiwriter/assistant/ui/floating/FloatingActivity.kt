@@ -11,6 +11,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -194,24 +195,29 @@ private fun InputInterface(
         // Preset selection
         var expanded by remember { mutableStateOf(false) }
         
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
+        var expanded by remember { mutableStateOf(false) }
+        
+        Box {
             OutlinedTextField(
                 value = currentPreset,
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("选择预设") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = { 
+                    Icon(
+                        if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = "展开"
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .menuAnchor()
+                    .clickable { expanded = !expanded }
             )
             
-            ExposedDropdownMenu(
+            DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth()
             ) {
                 presets.forEach { preset ->
                     DropdownMenuItem(

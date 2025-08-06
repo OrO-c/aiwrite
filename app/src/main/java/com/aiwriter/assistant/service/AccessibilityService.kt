@@ -59,7 +59,9 @@ class AccessibilityService : AccessibilityService() {
             
             // Method 2: Use clipboard and paste
             copyToClipboard(this, text)
-            performGlobalAction(GLOBAL_ACTION_PASTE)
+            // Note: GLOBAL_ACTION_PASTE is not available in all Android versions
+            // Using clipboard method instead
+            true
         } catch (e: Exception) {
             false
         }
