@@ -1,0 +1,289 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.aiwriter.assistant"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="34" />
+10
+11    <!-- 网络权限 -->
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->/workspace/app/src/main/AndroidManifest.xml:6:5-67
+12-->/workspace/app/src/main/AndroidManifest.xml:6:22-64
+13    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+13-->/workspace/app/src/main/AndroidManifest.xml:7:5-79
+13-->/workspace/app/src/main/AndroidManifest.xml:7:22-76
+14
+15    <!-- 悬浮窗权限 -->
+16    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+16-->/workspace/app/src/main/AndroidManifest.xml:10:5-78
+16-->/workspace/app/src/main/AndroidManifest.xml:10:22-75
+17
+18    <!-- 无障碍服务权限 -->
+19    <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
+19-->/workspace/app/src/main/AndroidManifest.xml:13:5-15:47
+19-->/workspace/app/src/main/AndroidManifest.xml:14:9-69
+20
+21    <!-- 通知权限 -->
+22    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+22-->/workspace/app/src/main/AndroidManifest.xml:18:5-77
+22-->/workspace/app/src/main/AndroidManifest.xml:18:22-74
+23
+24    <!-- 快速设置磁贴权限 -->
+25    <uses-permission android:name="android.permission.BIND_QUICK_SETTINGS_TILE" />
+25-->/workspace/app/src/main/AndroidManifest.xml:21:5-23:47
+25-->/workspace/app/src/main/AndroidManifest.xml:22:9-67
+26
+27    <!-- 震动权限 -->
+28    <uses-permission android:name="android.permission.VIBRATE" />
+28-->/workspace/app/src/main/AndroidManifest.xml:26:5-66
+28-->/workspace/app/src/main/AndroidManifest.xml:26:22-63
+29
+30    <permission
+30-->[androidx.core:core:1.12.0] /home/ubuntu/.gradle/caches/transforms-3/58226abba3927318172eefb70ca3ee2b/transformed/core-1.12.0/AndroidManifest.xml:22:5-24:47
+31        android:name="com.aiwriter.assistant.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+31-->[androidx.core:core:1.12.0] /home/ubuntu/.gradle/caches/transforms-3/58226abba3927318172eefb70ca3ee2b/transformed/core-1.12.0/AndroidManifest.xml:23:9-81
+32        android:protectionLevel="signature" />
+32-->[androidx.core:core:1.12.0] /home/ubuntu/.gradle/caches/transforms-3/58226abba3927318172eefb70ca3ee2b/transformed/core-1.12.0/AndroidManifest.xml:24:9-44
+33
+34    <uses-permission android:name="com.aiwriter.assistant.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+34-->[androidx.core:core:1.12.0] /home/ubuntu/.gradle/caches/transforms-3/58226abba3927318172eefb70ca3ee2b/transformed/core-1.12.0/AndroidManifest.xml:26:5-97
+34-->[androidx.core:core:1.12.0] /home/ubuntu/.gradle/caches/transforms-3/58226abba3927318172eefb70ca3ee2b/transformed/core-1.12.0/AndroidManifest.xml:26:22-94
+35
+36    <application
+36-->/workspace/app/src/main/AndroidManifest.xml:28:5-100:19
+37        android:name="com.aiwriter.assistant.AIWriterApplication"
+37-->/workspace/app/src/main/AndroidManifest.xml:29:9-44
+38        android:allowBackup="true"
+38-->/workspace/app/src/main/AndroidManifest.xml:30:9-35
+39        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+39-->[androidx.core:core:1.12.0] /home/ubuntu/.gradle/caches/transforms-3/58226abba3927318172eefb70ca3ee2b/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
+40        android:dataExtractionRules="@xml/data_extraction_rules"
+40-->/workspace/app/src/main/AndroidManifest.xml:31:9-65
+41        android:debuggable="true"
+42        android:extractNativeLibs="false"
+43        android:fullBackupContent="@xml/backup_rules"
+43-->/workspace/app/src/main/AndroidManifest.xml:32:9-54
+44        android:icon="@mipmap/ic_launcher"
+44-->/workspace/app/src/main/AndroidManifest.xml:33:9-43
+45        android:label="@string/app_name"
+45-->/workspace/app/src/main/AndroidManifest.xml:34:9-41
+46        android:roundIcon="@mipmap/ic_launcher_round"
+46-->/workspace/app/src/main/AndroidManifest.xml:35:9-54
+47        android:supportsRtl="true"
+47-->/workspace/app/src/main/AndroidManifest.xml:36:9-35
+48        android:theme="@style/Theme.AIWritingAssistant" >
+48-->/workspace/app/src/main/AndroidManifest.xml:37:9-56
+49
+50        <!-- 主Activity -->
+51        <activity
+51-->/workspace/app/src/main/AndroidManifest.xml:41:9-49:20
+52            android:name="com.aiwriter.assistant.ui.main.MainActivity"
+52-->/workspace/app/src/main/AndroidManifest.xml:42:13-49
+53            android:exported="true"
+53-->/workspace/app/src/main/AndroidManifest.xml:43:13-36
+54            android:theme="@style/Theme.AIWritingAssistant" >
+54-->/workspace/app/src/main/AndroidManifest.xml:44:13-60
+55            <intent-filter>
+55-->/workspace/app/src/main/AndroidManifest.xml:45:13-48:29
+56                <action android:name="android.intent.action.MAIN" />
+56-->/workspace/app/src/main/AndroidManifest.xml:46:17-69
+56-->/workspace/app/src/main/AndroidManifest.xml:46:25-66
+57
+58                <category android:name="android.intent.category.LAUNCHER" />
+58-->/workspace/app/src/main/AndroidManifest.xml:47:17-77
+58-->/workspace/app/src/main/AndroidManifest.xml:47:27-74
+59            </intent-filter>
+60        </activity>
+61
+62        <!-- 首次引导Activity -->
+63        <activity
+63-->/workspace/app/src/main/AndroidManifest.xml:52:9-55:75
+64            android:name="com.aiwriter.assistant.ui.onboarding.OnboardingActivity"
+64-->/workspace/app/src/main/AndroidManifest.xml:53:13-61
+65            android:exported="false"
+65-->/workspace/app/src/main/AndroidManifest.xml:54:13-37
+66            android:theme="@style/Theme.AIWritingAssistant.NoActionBar" />
+66-->/workspace/app/src/main/AndroidManifest.xml:55:13-72
+67
+68        <!-- 悬浮窗Activity -->
+69        <activity
+69-->/workspace/app/src/main/AndroidManifest.xml:58:9-63:49
+70            android:name="com.aiwriter.assistant.ui.floating.FloatingActivity"
+70-->/workspace/app/src/main/AndroidManifest.xml:59:13-57
+71            android:excludeFromRecents="true"
+71-->/workspace/app/src/main/AndroidManifest.xml:63:13-46
+72            android:exported="false"
+72-->/workspace/app/src/main/AndroidManifest.xml:60:13-37
+73            android:launchMode="singleInstance"
+73-->/workspace/app/src/main/AndroidManifest.xml:62:13-48
+74            android:theme="@style/Theme.AIWritingAssistant.Transparent" />
+74-->/workspace/app/src/main/AndroidManifest.xml:61:13-72
+75
+76        <!-- 快速设置磁贴服务 -->
+77        <service
+77-->/workspace/app/src/main/AndroidManifest.xml:66:9-75:19
+78            android:name="com.aiwriter.assistant.service.WritingTileService"
+78-->/workspace/app/src/main/AndroidManifest.xml:67:13-55
+79            android:exported="true"
+79-->/workspace/app/src/main/AndroidManifest.xml:68:13-36
+80            android:icon="@drawable/ic_edit"
+80-->/workspace/app/src/main/AndroidManifest.xml:69:13-45
+81            android:label="@string/tile_label"
+81-->/workspace/app/src/main/AndroidManifest.xml:70:13-47
+82            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE" >
+82-->/workspace/app/src/main/AndroidManifest.xml:71:13-77
+83            <intent-filter>
+83-->/workspace/app/src/main/AndroidManifest.xml:72:13-74:29
+84                <action android:name="android.service.quicksettings.action.QS_TILE" />
+84-->/workspace/app/src/main/AndroidManifest.xml:73:17-87
+84-->/workspace/app/src/main/AndroidManifest.xml:73:25-84
+85            </intent-filter>
+86        </service>
+87
+88        <!-- 无障碍服务 -->
+89        <service
+89-->/workspace/app/src/main/AndroidManifest.xml:78:9-88:19
+90            android:name="com.aiwriter.assistant.service.AccessibilityService"
+90-->/workspace/app/src/main/AndroidManifest.xml:79:13-57
+91            android:exported="false"
+91-->/workspace/app/src/main/AndroidManifest.xml:80:13-37
+92            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
+92-->/workspace/app/src/main/AndroidManifest.xml:81:13-79
+93            <intent-filter>
+93-->/workspace/app/src/main/AndroidManifest.xml:82:13-84:29
+94                <action android:name="android.accessibilityservice.AccessibilityService" />
+94-->/workspace/app/src/main/AndroidManifest.xml:83:17-92
+94-->/workspace/app/src/main/AndroidManifest.xml:83:25-89
+95            </intent-filter>
+96
+97            <meta-data
+97-->/workspace/app/src/main/AndroidManifest.xml:85:13-87:72
+98                android:name="android.accessibilityservice"
+98-->/workspace/app/src/main/AndroidManifest.xml:86:17-60
+99                android:resource="@xml/accessibility_service_config" />
+99-->/workspace/app/src/main/AndroidManifest.xml:87:17-69
+100        </service>
+101
+102        <!-- 悬浮窗服务 -->
+103        <service
+103-->/workspace/app/src/main/AndroidManifest.xml:91:9-98:19
+104            android:name="com.aiwriter.assistant.service.FloatingWindowService"
+104-->/workspace/app/src/main/AndroidManifest.xml:92:13-58
+105            android:exported="false"
+105-->/workspace/app/src/main/AndroidManifest.xml:93:13-37
+106            android:foregroundServiceType="specialUse" >
+106-->/workspace/app/src/main/AndroidManifest.xml:94:13-55
+107            <property
+107-->/workspace/app/src/main/AndroidManifest.xml:95:13-97:51
+108                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+108-->/workspace/app/src/main/AndroidManifest.xml:96:17-76
+109                android:value="floating_window" />
+109-->/workspace/app/src/main/AndroidManifest.xml:97:17-48
+110        </service>
+111
+112        <activity
+112-->[androidx.compose.ui:ui-test-manifest:1.6.0] /home/ubuntu/.gradle/caches/transforms-3/568cd864b85156995cd96cd352052548/transformed/ui-test-manifest-1.6.0/AndroidManifest.xml:23:9-25:39
+113            android:name="androidx.activity.ComponentActivity"
+113-->[androidx.compose.ui:ui-test-manifest:1.6.0] /home/ubuntu/.gradle/caches/transforms-3/568cd864b85156995cd96cd352052548/transformed/ui-test-manifest-1.6.0/AndroidManifest.xml:24:13-63
+114            android:exported="true" />
+114-->[androidx.compose.ui:ui-test-manifest:1.6.0] /home/ubuntu/.gradle/caches/transforms-3/568cd864b85156995cd96cd352052548/transformed/ui-test-manifest-1.6.0/AndroidManifest.xml:25:13-36
+115        <activity
+115-->[androidx.compose.ui:ui-tooling-android:1.6.0] /home/ubuntu/.gradle/caches/transforms-3/0cbc4f5257b845f3e0b4dedf6eab38c0/transformed/ui-tooling-release/AndroidManifest.xml:23:9-25:39
+116            android:name="androidx.compose.ui.tooling.PreviewActivity"
+116-->[androidx.compose.ui:ui-tooling-android:1.6.0] /home/ubuntu/.gradle/caches/transforms-3/0cbc4f5257b845f3e0b4dedf6eab38c0/transformed/ui-tooling-release/AndroidManifest.xml:24:13-71
+117            android:exported="true" />
+117-->[androidx.compose.ui:ui-tooling-android:1.6.0] /home/ubuntu/.gradle/caches/transforms-3/0cbc4f5257b845f3e0b4dedf6eab38c0/transformed/ui-tooling-release/AndroidManifest.xml:25:13-36
+118
+119        <provider
+119-->[androidx.emoji2:emoji2:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/9aff9e391c3b4d0a1dc69746e93af5fc/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+120            android:name="androidx.startup.InitializationProvider"
+120-->[androidx.emoji2:emoji2:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/9aff9e391c3b4d0a1dc69746e93af5fc/transformed/emoji2-1.3.0/AndroidManifest.xml:25:13-67
+121            android:authorities="com.aiwriter.assistant.androidx-startup"
+121-->[androidx.emoji2:emoji2:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/9aff9e391c3b4d0a1dc69746e93af5fc/transformed/emoji2-1.3.0/AndroidManifest.xml:26:13-68
+122            android:exported="false" >
+122-->[androidx.emoji2:emoji2:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/9aff9e391c3b4d0a1dc69746e93af5fc/transformed/emoji2-1.3.0/AndroidManifest.xml:27:13-37
+123            <meta-data
+123-->[androidx.emoji2:emoji2:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/9aff9e391c3b4d0a1dc69746e93af5fc/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+124                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+124-->[androidx.emoji2:emoji2:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/9aff9e391c3b4d0a1dc69746e93af5fc/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+125                android:value="androidx.startup" />
+125-->[androidx.emoji2:emoji2:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/9aff9e391c3b4d0a1dc69746e93af5fc/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+126            <meta-data
+126-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/ubuntu/.gradle/caches/transforms-3/9658eb90fc79293a9e2d796de7928cb3/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:29:13-31:52
+127                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+127-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/ubuntu/.gradle/caches/transforms-3/9658eb90fc79293a9e2d796de7928cb3/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:30:17-78
+128                android:value="androidx.startup" />
+128-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/ubuntu/.gradle/caches/transforms-3/9658eb90fc79293a9e2d796de7928cb3/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:31:17-49
+129            <meta-data
+129-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:29:13-31:52
+130                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+130-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:30:17-85
+131                android:value="androidx.startup" />
+131-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:31:17-49
+132        </provider>
+133
+134        <uses-library
+134-->[androidx.window:window:1.0.0] /home/ubuntu/.gradle/caches/transforms-3/92558968eb4d9d64a12c84ece89d5fef/transformed/window-1.0.0/AndroidManifest.xml:25:9-27:40
+135            android:name="androidx.window.extensions"
+135-->[androidx.window:window:1.0.0] /home/ubuntu/.gradle/caches/transforms-3/92558968eb4d9d64a12c84ece89d5fef/transformed/window-1.0.0/AndroidManifest.xml:26:13-54
+136            android:required="false" />
+136-->[androidx.window:window:1.0.0] /home/ubuntu/.gradle/caches/transforms-3/92558968eb4d9d64a12c84ece89d5fef/transformed/window-1.0.0/AndroidManifest.xml:27:13-37
+137        <uses-library
+137-->[androidx.window:window:1.0.0] /home/ubuntu/.gradle/caches/transforms-3/92558968eb4d9d64a12c84ece89d5fef/transformed/window-1.0.0/AndroidManifest.xml:28:9-30:40
+138            android:name="androidx.window.sidecar"
+138-->[androidx.window:window:1.0.0] /home/ubuntu/.gradle/caches/transforms-3/92558968eb4d9d64a12c84ece89d5fef/transformed/window-1.0.0/AndroidManifest.xml:29:13-51
+139            android:required="false" />
+139-->[androidx.window:window:1.0.0] /home/ubuntu/.gradle/caches/transforms-3/92558968eb4d9d64a12c84ece89d5fef/transformed/window-1.0.0/AndroidManifest.xml:30:13-37
+140
+141        <service
+141-->[androidx.room:room-runtime:2.6.1] /home/ubuntu/.gradle/caches/transforms-3/9c734e74c5eb11d5f83cd528de6b1949/transformed/room-runtime-2.6.1/AndroidManifest.xml:24:9-28:63
+142            android:name="androidx.room.MultiInstanceInvalidationService"
+142-->[androidx.room:room-runtime:2.6.1] /home/ubuntu/.gradle/caches/transforms-3/9c734e74c5eb11d5f83cd528de6b1949/transformed/room-runtime-2.6.1/AndroidManifest.xml:25:13-74
+143            android:directBootAware="true"
+143-->[androidx.room:room-runtime:2.6.1] /home/ubuntu/.gradle/caches/transforms-3/9c734e74c5eb11d5f83cd528de6b1949/transformed/room-runtime-2.6.1/AndroidManifest.xml:26:13-43
+144            android:exported="false" />
+144-->[androidx.room:room-runtime:2.6.1] /home/ubuntu/.gradle/caches/transforms-3/9c734e74c5eb11d5f83cd528de6b1949/transformed/room-runtime-2.6.1/AndroidManifest.xml:27:13-37
+145
+146        <receiver
+146-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:34:9-52:20
+147            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+147-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:35:13-76
+148            android:directBootAware="false"
+148-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:36:13-44
+149            android:enabled="true"
+149-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:37:13-35
+150            android:exported="true"
+150-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:38:13-36
+151            android:permission="android.permission.DUMP" >
+151-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:39:13-57
+152            <intent-filter>
+152-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:40:13-42:29
+153                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+153-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:41:17-91
+153-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:41:25-88
+154            </intent-filter>
+155            <intent-filter>
+155-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:43:13-45:29
+156                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+156-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:44:17-85
+156-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:44:25-82
+157            </intent-filter>
+158            <intent-filter>
+158-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:46:13-48:29
+159                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+159-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:47:17-88
+159-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:47:25-85
+160            </intent-filter>
+161            <intent-filter>
+161-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:49:13-51:29
+162                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+162-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:50:17-95
+162-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/ubuntu/.gradle/caches/transforms-3/1bdf95dce107d0e560e0b7ee348966b8/transformed/profileinstaller-1.3.0/AndroidManifest.xml:50:25-92
+163            </intent-filter>
+164        </receiver>
+165    </application>
+166
+167</manifest>

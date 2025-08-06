@@ -31,6 +31,8 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -59,6 +61,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aiwriter.assistant.data.model.WorkMode
 import com.aiwriter.assistant.service.AccessibilityService
 import com.aiwriter.assistant.ui.theme.AIWritingAssistantTheme
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.Input
 
 class FloatingActivity : ComponentActivity() {
     
@@ -122,8 +126,9 @@ fun FloatingWritingInterface(
                         LoadingState()
                     }
                     uiState.generatedText != null -> {
+                        val generatedText = uiState.generatedText!!
                         GeneratedTextDisplay(
-                            generatedText = uiState.generatedText,
+                            generatedText = generatedText,
                             mode = mode,
                             onCopyText = { text ->
                                 copyToClipboard(context, text)
@@ -149,10 +154,10 @@ fun FloatingWritingInterface(
                         )
                     }
                     else -> {
-                        InputInterface(
-                            currentPreset = uiState.currentPreset,
+                        InputSection(
                             inputText = uiState.inputText,
                             onInputChanged = viewModel::updateInputText,
+                            currentPreset = uiState.currentPreset,
                             onPresetChanged = viewModel::selectPreset,
                             onGenerate = viewModel::generateText,
                             presets = uiState.availablePresets
@@ -182,10 +187,10 @@ private fun LoadingState() {
 }
 
 @Composable
-private fun InputInterface(
-    currentPreset: String,
+private fun InputSection(
     inputText: String,
     onInputChanged: (String) -> Unit,
+    currentPreset: String,
     onPresetChanged: (String) -> Unit,
     onGenerate: () -> Unit,
     presets: List<com.aiwriter.assistant.data.model.WritingPreset>
@@ -194,24 +199,27 @@ private fun InputInterface(
         // Preset selection
         var expanded by remember { mutableStateOf(false) }
         
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
+        Box {
             OutlinedTextField(
                 value = currentPreset,
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("选择预设") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = { 
+                    Icon(
+                        if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = "展开"
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .menuAnchor()
+                    .clickable { expanded = true }
             )
             
-            ExposedDropdownMenu(
+            DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth()
             ) {
                 presets.forEach { preset ->
                     DropdownMenuItem(

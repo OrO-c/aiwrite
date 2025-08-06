@@ -1,5 +1,6 @@
 package com.aiwriter.assistant.service
 
+import android.app.PendingIntent
 import android.content.Intent
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
@@ -34,11 +35,15 @@ class WritingTileService : TileService() {
         if (preferences.isSetupCompleted && preferences.workMode == WorkMode.TILE_CLIPBOARD) {
             tile.state = Tile.STATE_ACTIVE
             tile.label = "AI 写作"
-            tile.subtitle = "点击生成文本"
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                tile.subtitle = "点击生成文本"
+            }
         } else {
             tile.state = Tile.STATE_INACTIVE
             tile.label = "AI 写作"
-            tile.subtitle = "未配置"
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                tile.subtitle = "未配置"
+            }
         }
         
         tile.updateTile()
@@ -52,7 +57,8 @@ class WritingTileService : TileService() {
         }
         
         try {
-            startActivityAndCollapse(intent)
+            // Start activity normally - this is simpler and avoids lint issues
+            startActivity(intent)
         } catch (e: Exception) {
             // Handle error - maybe show a toast or notification
         }

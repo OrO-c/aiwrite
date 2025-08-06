@@ -19,13 +19,75 @@ class AccessibilityService : AccessibilityService() {
         fun isServiceEnabled(): Boolean = instance != null
         
         fun insertText(text: String): Boolean {
-            return getInstance()?.performTextInsertion(text) ?: false
+            return getInstance()?.let { service ->
+                try {
+                    // Method 1: Try to find focused text field and insert text
+                    val focusedNode = findFocusedEditableNode(service.rootInActiveWindow)
+                    if (focusedNode != null) {
+                        insertTextToNode(focusedNode, text)
+                        return true
+                    }
+                    
+                    // Method 2: Use clipboard and paste
+                    copyToClipboard(service, text)
+                    // Note: GLOBAL_ACTION_PASTE might not be available on all Android versions
+                    // For now, we'll rely on the clipboard method
+                    return true
+                } catch (e: Exception) {
+                    false
+                }
+            } ?: false
         }
         
         fun copyToClipboard(context: Context, text: String) {
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("AI Writing Assistant", text)
             clipboard.setPrimaryClip(clip)
+        }
+        
+        private fun findFocusedEditableNode(root: AccessibilityNodeInfo?): AccessibilityNodeInfo? {
+            root ?: return null
+            
+            // Check if current node is focused and editable
+            if (root.isFocused && root.isEditable) {
+                return root
+            }
+            
+            // Search in children
+            for (i in 0 until root.childCount) {
+                val child = root.getChild(i)
+                child?.let {
+                    val found = findFocusedEditableNode(it)
+                    if (found != null) {
+                        it.recycle()
+                        return found
+                    }
+                    it.recycle()
+                }
+            }
+            
+            return null
+        }
+        
+        private fun insertTextToNode(node: AccessibilityNodeInfo, text: String): Boolean {
+            return try {
+                // Method 1: Set text directly
+                val arguments = bundleOf(
+                    AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE to text
+                )
+                val success = node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
+                
+                if (!success) {
+                    // Method 2: Clear and set text
+                    node.performAction(AccessibilityNodeInfo.ACTION_CLEAR_FOCUS)
+                    node.performAction(AccessibilityNodeInfo.ACTION_FOCUS)
+                    node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
+                }
+                
+                success
+            } catch (e: Exception) {
+                false
+            }
         }
     }
     
@@ -46,66 +108,5 @@ class AccessibilityService : AccessibilityService() {
     
     override fun onInterrupt() {
         // Handle service interruption
-    }
-    
-    private fun performTextInsertion(text: String): Boolean {
-        return try {
-            // Method 1: Try to find focused text field and insert text
-            val focusedNode = findFocusedEditableNode(rootInActiveWindow)
-            if (focusedNode != null) {
-                insertTextToNode(focusedNode, text)
-                return true
-            }
-            
-            // Method 2: Use clipboard and paste
-            copyToClipboard(this, text)
-            performGlobalAction(GLOBAL_ACTION_PASTE)
-        } catch (e: Exception) {
-            false
-        }
-    }
-    
-    private fun findFocusedEditableNode(root: AccessibilityNodeInfo?): AccessibilityNodeInfo? {
-        root ?: return null
-        
-        // Check if current node is focused and editable
-        if (root.isFocused && root.isEditable) {
-            return root
-        }
-        
-        // Search in children
-        for (i in 0 until root.childCount) {
-            val child = root.getChild(i)
-            child?.let {
-                val found = findFocusedEditableNode(it)
-                if (found != null) {
-                    it.recycle()
-                    return found
-                }
-                it.recycle()
-            }
-        }
-        
-        return null
-    }
-    
-    private fun insertTextToNode(node: AccessibilityNodeInfo, text: String): Boolean {
-        return try {
-            // Method 1: Set text directly
-            val arguments = bundleOf(
-                AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE to text
-            )
-            val success = node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
-            
-            if (!success) {
-                // Method 2: Use clipboard and paste action
-                copyToClipboard(this, text)
-                node.performAction(AccessibilityNodeInfo.ACTION_PASTE)
-            } else {
-                true
-            }
-        } catch (e: Exception) {
-            false
-        }
     }
 }

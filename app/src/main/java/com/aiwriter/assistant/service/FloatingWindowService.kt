@@ -10,7 +10,9 @@ import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
+import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
@@ -26,6 +28,20 @@ class FloatingWindowService : Service() {
     companion object {
         private const val NOTIFICATION_ID = 1001
         private const val CHANNEL_ID = "floating_service"
+        
+        fun start(context: Context) {
+            val intent = Intent(context, FloatingWindowService::class.java).apply {
+                action = "SHOW_FLOATING_BUTTON"
+            }
+            context.startForegroundService(intent)
+        }
+        
+        fun stop(context: Context) {
+            val intent = Intent(context, FloatingWindowService::class.java).apply {
+                action = "STOP_SERVICE"
+            }
+            context.startService(intent)
+        }
     }
     
     private var windowManager: WindowManager? = null
@@ -99,23 +115,19 @@ class FloatingWindowService : Service() {
         
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         
-        // Create floating button
+        // Create floating button view
         floatingView = LayoutInflater.from(this).inflate(R.layout.floating_button, null)
         
-        val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val params = WindowManager.LayoutParams().apply {
+            width = WindowManager.LayoutParams.WRAP_CONTENT
+            height = WindowManager.LayoutParams.WRAP_CONTENT
+            type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             } else {
-                @Suppress("DEPRECATION")
                 WindowManager.LayoutParams.TYPE_PHONE
-            },
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-            PixelFormat.TRANSLUCENT
-        ).apply {
+            }
+            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+            format = PixelFormat.TRANSLUCENT
             gravity = Gravity.TOP or Gravity.START
             x = 0
             y = 100
@@ -197,22 +209,6 @@ class FloatingWindowService : Service() {
             startActivity(intent)
         } catch (e: Exception) {
             // Handle error
-        }
-    }
-    
-    companion object {
-        fun start(context: Context) {
-            val intent = Intent(context, FloatingWindowService::class.java).apply {
-                action = "SHOW_FLOATING_BUTTON"
-            }
-            context.startForegroundService(intent)
-        }
-        
-        fun stop(context: Context) {
-            val intent = Intent(context, FloatingWindowService::class.java).apply {
-                action = "STOP_SERVICE"
-            }
-            context.startService(intent)
         }
     }
 }

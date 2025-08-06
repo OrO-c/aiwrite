@@ -87,20 +87,17 @@ fun PresetsScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PresetCard(
     preset: WritingPreset,
+    onSetDefault: () -> Unit,
     onEdit: () -> Unit,
-    onDelete: () -> Unit,
-    onSetDefault: () -> Unit
+    onDelete: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = if (preset.isDefault) {
-            CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-        } else {
-            CardDefaults.cardColors()
-        }
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)

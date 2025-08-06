@@ -1,0 +1,46 @@
+[
+    {
+        "merged": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-merged_res-78:/xml_backup_rules.xml.flat",
+        "source": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-main-80:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-merged_res-78:/mipmap-hdpi_ic_launcher.xml.flat",
+        "source": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-main-80:/mipmap-hdpi/ic_launcher.xml"
+    },
+    {
+        "merged": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-merged_res-78:/xml_accessibility_service_config.xml.flat",
+        "source": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-main-80:/xml/accessibility_service_config.xml"
+    },
+    {
+        "merged": "com.aiwriter.assistant.app-merged_res-78:/layout_floating_button.xml.flat",
+        "source": "com.aiwriter.assistant.app-main-80:/layout/floating_button.xml"
+    },
+    {
+        "merged": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-merged_res-78:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-main-80:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-merged_res-78:/drawable_ic_launcher_background.xml.flat",
+        "source": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-main-80:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-merged_res-78:/layout_floating_button.xml.flat",
+        "source": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-main-80:/layout/floating_button.xml"
+    },
+    {
+        "merged": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-merged_res-78:/drawable_ic_close.xml.flat",
+        "source": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-main-80:/drawable/ic_close.xml"
+    },
+    {
+        "merged": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-merged_res-78:/drawable_ic_edit.xml.flat",
+        "source": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-main-80:/drawable/ic_edit.xml"
+    },
+    {
+        "merged": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-merged_res-78:/xml_data_extraction_rules.xml.flat",
+        "source": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-main-80:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-merged_res-78:/mipmap-hdpi_ic_launcher_round.xml.flat",
+        "source": "/home/ubuntu/.gradle/daemon/8.4/com.aiwriter.assistant.app-main-80:/mipmap-hdpi/ic_launcher_round.xml"
+    }
+]

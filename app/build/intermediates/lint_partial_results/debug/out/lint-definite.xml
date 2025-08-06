@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.2.2" type="incidents">
+
+    <incident
+        id="MonochromeLauncherIcon"
+        severity="warning"
+        message="The application adaptive icon is missing a monochrome tag">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-hdpi/ic_launcher.xml"
+            line="2"
+            column="1"
+            startOffset="39"
+            endLine="5"
+            endColumn="17"
+            endOffset="272"/>
+    </incident>
+
+    <incident
+        id="MonochromeLauncherIcon"
+        severity="warning"
+        message="The application adaptive roundIcon is missing a monochrome tag">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-hdpi/ic_launcher_round.xml"
+            line="2"
+            column="1"
+            startOffset="39"
+            endLine="5"
+            endColumn="17"
+            endOffset="272"/>
+    </incident>
+
+    <incident
+        id="StaticFieldLeak"
+        severity="warning"
+        message="Do not place Android context classes in static fields; this is a memory leak">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/aiwriter/assistant/service/AccessibilityService.kt"
+            line="15"
+            column="9"
+            startOffset="458"
+            endLine="15"
+            endColumn="59"
+            endOffset="508"/>
+    </incident>
+
+    <incident
+        id="ClickableViewAccessibility"
+        severity="warning"
+        message="`onTouch` lambda should call `View#performClick` when a click is detected">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/aiwriter/assistant/service/FloatingWindowService.kt"
+            line="182"
+            column="33"
+            startOffset="6310"
+            endLine="199"
+            endColumn="10"
+            endOffset="6985"/>
+    </incident>
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="Unnecessary; SDK_INT is always >= 26">
+        <fix-data conditional="true"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/aiwriter/assistant/service/FloatingWindowService.kt"
+            line="74"
+            column="13"
+            startOffset="2396"
+            endLine="74"
+            endColumn="59"
+            endOffset="2442"/>
+    </incident>
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="Unnecessary; SDK_INT is always >= 26">
+        <fix-data conditional="true"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/aiwriter/assistant/service/FloatingWindowService.kt"
+            line="124"
+            column="24"
+            startOffset="4325"
+            endLine="124"
+            endColumn="70"
+            endOffset="4371"/>
+    </incident>
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="Unnecessary; SDK_INT is always >= 26">
+        <fix-data conditional="true"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/aiwriter/assistant/service/FloatingWindowService.kt"
+            line="143"
+            column="21"
+            startOffset="5090"
+            endLine="143"
+            endColumn="67"
+            endOffset="5136"/>
+    </incident>
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="Unnecessary; SDK_INT is always >= 26">
+        <fix-data conditional="true"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/aiwriter/assistant/utils/PermissionHelper.kt"
+            line="24"
+            column="20"
+            startOffset="661"
+            endLine="24"
+            endColumn="66"
+            endOffset="707"/>
+    </incident>
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="Unnecessary; SDK_INT is always >= 26">
+        <fix-data conditional="true"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/aiwriter/assistant/utils/PermissionHelper.kt"
+            line="35"
+            column="13"
+            startOffset="910"
+            endLine="35"
+            endColumn="59"
+            endOffset="956"/>
+    </incident>
+
+    <incident
+        id="DataBindingWithoutKapt"
+        severity="warning"
+        message="If you plan to use data binding in a Kotlin project, you should apply the kotlin-kapt plugin.">
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="39"
+            column="9"
+            startOffset="910"
+            endLine="39"
+            endColumn="25"
+            endOffset="926"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.core:core-ktx than 1.12.0 is available: 1.16.0">
+        <fix-replace
+            description="Change to 1.16.0"
+            family="Update versions"
+            oldString="1.12.0"
+            replacement="1.16.0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="54"
+            column="20"
+            startOffset="1200"
+            endLine="54"
+            endColumn="51"
+            endOffset="1231"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.7.0 is available: 2.9.2">
+        <fix-replace
+            description="Change to 2.9.2"
+            family="Update versions"
+            oldString="2.7.0"
+            replacement="2.9.2"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="55"
+            column="20"
+            startOffset="1251"
+            endLine="55"
+            endColumn="68"
+            endOffset="1299"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.activity:activity-compose than 1.8.2 is available: 1.10.1">
+        <fix-replace
+            description="Change to 1.10.1"
+            family="Update versions"
+            oldString="1.8.2"
+            replacement="1.10.1"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="56"
+            column="20"
+            startOffset="1319"
+            endLine="56"
+            endColumn="62"
+            endOffset="1361"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.fragment:fragment-ktx than 1.6.2 is available: 1.8.8">
+        <fix-replace
+            description="Change to 1.8.8"
+            family="Update versions"
+            oldString="1.6.2"
+            replacement="1.8.8"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="57"
+            column="20"
+            startOffset="1381"
+            endLine="57"
+            endColumn="58"
+            endOffset="1419"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of com.google.android.material:material than 1.11.0 is available: 1.12.0">
+        <fix-replace
+            description="Change to 1.12.0"
+            family="Update versions"
+            oldString="1.11.0"
+            replacement="1.12.0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="60"
+            column="20"
+            startOffset="1467"
+            endLine="60"
+            endColumn="65"
+            endOffset="1512"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.compose:compose-bom than 2024.01.00 is available: 2025.07.00">
+        <fix-replace
+            description="Change to 2025.07.00"
+            family="Update versions"
+            oldString="2024.01.00"
+            replacement="2025.07.00"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="63"
+            column="29"
+            startOffset="1565"
+            endLine="63"
+            endColumn="70"
+            endOffset="1606"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.navigation:navigation-compose than 2.7.5 is available: 2.9.3">
+        <fix-replace
+            description="Change to 2.9.3"
+            family="Update versions"
+            oldString="2.7.5"
+            replacement="2.9.3"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="72"
+            column="20"
+            startOffset="1994"
+            endLine="72"
+            endColumn="66"
+            endOffset="2040"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.7.0 is available: 2.9.2">
+        <fix-replace
+            description="Change to 2.9.2"
+            family="Update versions"
+            oldString="2.7.0"
+            replacement="2.9.2"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="75"
+            column="20"
+            startOffset="2082"
+            endLine="75"
+            endColumn="74"
+            endOffset="2136"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.7.2">
+        <fix-replace
+            description="Change to 2.7.2"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.7.2"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="78"
+            column="20"
+            startOffset="2182"
+            endLine="78"
+            endColumn="54"
+            endOffset="2216"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.7.2">
+        <fix-replace
+            description="Change to 2.7.2"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.7.2"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="79"
+            column="20"
+            startOffset="2236"
+            endLine="79"
+            endColumn="50"
+            endOffset="2266"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.7.2">
+        <fix-replace
+            description="Change to 2.7.2"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.7.2"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="80"
+            column="9"
+            startOffset="2275"
+            endLine="80"
+            endColumn="44"
+            endOffset="2310"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0">
+        <fix-replace
+            description="Change to 1.3.0"
+            family="Update versions"
+            oldString="1.1.5"
+            replacement="1.3.0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="98"
+            column="31"
+            startOffset="2929"
+            endLine="98"
+            endColumn="62"
+            endOffset="2960"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0">
+        <fix-replace
+            description="Change to 3.7.0"
+            family="Update versions"
+            oldString="3.5.1"
+            replacement="3.7.0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="99"
+            column="31"
+            startOffset="2991"
+            endLine="99"
+            endColumn="75"
+            endOffset="3035"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.compose:compose-bom than 2024.01.00 is available: 2025.07.00">
+        <fix-replace
+            description="Change to 2025.07.00"
+            family="Update versions"
+            oldString="2024.01.00"
+            replacement="2025.07.00"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="100"
+            column="40"
+            startOffset="3075"
+            endLine="100"
+            endColumn="81"
+            endOffset="3116"/>
+    </incident>
+
+    <incident
+        id="InflateParams"
+        severity="warning"
+        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/aiwriter/assistant/service/FloatingWindowService.kt"
+            line="119"
+            column="84"
+            startOffset="4108"
+            endLine="119"
+            endColumn="88"
+            endOffset="4112"/>
+    </incident>
+
+</incidents>

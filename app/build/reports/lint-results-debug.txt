@@ -1,0 +1,379 @@
+/home/ubuntu/.gradle/caches/transforms-3/4e93f1c15acb203079fea0115dc3deb0/transformed/runtime-release/jars/lint.jar: Warning: Library lint checks reference invalid APIs; these checks will be skipped!
+
+Lint found an issue registry (androidx.compose.runtime.lint.RuntimeIssueRegistry)
+which contains some references to invalid API:
+org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider: org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory getTokenFactory()
+(Referenced from androidx/compose/runtime/lint/AutoboxingStateCreationDetector.class)
+
+Therefore, this lint check library is not included
+in analysis. This affects the following lint checks:
+AutoboxingStateValueProperty
+AutoboxingStateCreation
+CoroutineCreationDuringComposition
+FlowOperatorInvokedInComposition
+ComposableLambdaParameterNaming
+ComposableLambdaParameterPosition
+ComposableNaming
+StateFlowValueCalledInComposition
+CompositionLocalNaming
+MutableCollectionMutableState
+ProduceStateDoesNotAssignValue
+RememberReturnType
+OpaqueUnitKey
+UnrememberedMutableState
+
+To use this lint check, upgrade to a more recent version
+of the library. [ObsoleteLintCustomCheck]
+
+   Explanation for issues of type "ObsoleteLintCustomCheck":
+   Lint can be extended with "custom checks": additional checks implemented by
+   developers and libraries to for example enforce specific API usages
+   required by a library or a company coding style guideline.
+
+   The Lint APIs are not yet stable, so these checks may either cause a
+   performance degradation, or stop working, or provide wrong results.
+
+   This warning flags custom lint checks that are found to be using obsolete
+   APIs and will need to be updated to run in the current lint environment.
+
+   It may also flag issues found to be using a newer version of the API,
+   meaning that you need to use a newer version of lint (or Android Studio or
+   Gradle plugin etc) to work with these checks.
+
+/workspace/app/src/main/java/com/aiwriter/assistant/service/FloatingWindowService.kt:119: Warning: Avoid passing null as the view root (needed to resolve layout parameters on the inflated layout's root element) [InflateParams]
+        floatingView = LayoutInflater.from(this).inflate(R.layout.floating_button, null)
+                                                                                   ~~~~
+
+   Explanation for issues of type "InflateParams":
+   When inflating a layout, avoid passing in null as the parent view, since
+   otherwise any layout parameters on the root of the inflated layout will be
+   ignored.
+
+   https://www.bignerdranch.com/blog/understanding-androids-layoutinflater-inflate/
+
+/workspace/app/build.gradle:54: Warning: A newer version of androidx.core:core-ktx than 1.12.0 is available: 1.16.0 [GradleDependency]
+    implementation 'androidx.core:core-ktx:1.12.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/build.gradle:55: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.7.0 is available: 2.9.2 [GradleDependency]
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/build.gradle:56: Warning: A newer version of androidx.activity:activity-compose than 1.8.2 is available: 1.10.1 [GradleDependency]
+    implementation 'androidx.activity:activity-compose:1.8.2'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/build.gradle:57: Warning: A newer version of androidx.fragment:fragment-ktx than 1.6.2 is available: 1.8.8 [GradleDependency]
+    implementation 'androidx.fragment:fragment-ktx:1.6.2'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/build.gradle:60: Warning: A newer version of com.google.android.material:material than 1.11.0 is available: 1.12.0 [GradleDependency]
+    implementation 'com.google.android.material:material:1.11.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/build.gradle:63: Warning: A newer version of androidx.compose:compose-bom than 2024.01.00 is available: 2025.07.00 [GradleDependency]
+    implementation platform('androidx.compose:compose-bom:2024.01.00')
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/build.gradle:72: Warning: A newer version of androidx.navigation:navigation-compose than 2.7.5 is available: 2.9.3 [GradleDependency]
+    implementation 'androidx.navigation:navigation-compose:2.7.5'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/build.gradle:75: Warning: A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.7.0 is available: 2.9.2 [GradleDependency]
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/build.gradle:78: Warning: A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.7.2 [GradleDependency]
+    implementation 'androidx.room:room-runtime:2.6.1'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/build.gradle:79: Warning: A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.7.2 [GradleDependency]
+    implementation 'androidx.room:room-ktx:2.6.1'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/build.gradle:80: Warning: A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.7.2 [GradleDependency]
+    ksp 'androidx.room:room-compiler:2.6.1'
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/build.gradle:98: Warning: A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0 [GradleDependency]
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/build.gradle:99: Warning: A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0 [GradleDependency]
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/build.gradle:100: Warning: A newer version of androidx.compose:compose-bom than 2024.01.00 is available: 2025.07.00 [GradleDependency]
+    androidTestImplementation platform('androidx.compose:compose-bom:2024.01.00')
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+/workspace/app/build.gradle:39: Warning: If you plan to use data binding in a Kotlin project, you should apply the kotlin-kapt plugin. [DataBindingWithoutKapt]
+        dataBinding true
+        ~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "DataBindingWithoutKapt":
+   Apps that use Kotlin and data binding should also apply the kotlin-kapt
+   plugin.
+
+   https://kotlinlang.org/docs/reference/kapt.html
+
+/workspace/app/src/main/java/com/aiwriter/assistant/service/FloatingWindowService.kt:74: Warning: Unnecessary; SDK_INT is always >= 26 [ObsoleteSdkInt]
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/java/com/aiwriter/assistant/service/FloatingWindowService.kt:124: Warning: Unnecessary; SDK_INT is always >= 26 [ObsoleteSdkInt]
+            type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/java/com/aiwriter/assistant/service/FloatingWindowService.kt:143: Warning: Unnecessary; SDK_INT is always >= 26 [ObsoleteSdkInt]
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/java/com/aiwriter/assistant/utils/PermissionHelper.kt:24: Warning: Unnecessary; SDK_INT is always >= 26 [ObsoleteSdkInt]
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/java/com/aiwriter/assistant/utils/PermissionHelper.kt:35: Warning: Unnecessary; SDK_INT is always >= 26 [ObsoleteSdkInt]
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ObsoleteSdkInt":
+   This check flags version checks that are not necessary, because the
+   minSdkVersion (or surrounding known API level) is already at least as high
+   as the version checked for.
+
+   Similarly, it also looks for resources in -vNN folders, such as values-v14
+   where the version qualifier is less than or equal to the minSdkVersion,
+   where the contents should be merged into the best folder.
+
+/workspace/app/src/main/java/com/aiwriter/assistant/service/AccessibilityService.kt:15: Warning: Do not place Android context classes in static fields; this is a memory leak [StaticFieldLeak]
+        private var instance: AccessibilityService? = null
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "StaticFieldLeak":
+   A static field will leak contexts.
+
+   Non-static inner classes have an implicit reference to their outer class.
+   If that outer class is for example a Fragment or Activity, then this
+   reference means that the long-running handler/loader/task will hold a
+   reference to the activity which prevents it from getting garbage
+   collected.
+
+   Similarly, direct field references to activities and fragments from these
+   longer running instances can cause leaks.
+
+   ViewModel classes should never point to Views or non-application Contexts.
+
+/workspace/app/src/main/res/values/colors.xml:4: Warning: The resource R.color.purple_200 appears to be unused [UnusedResources]
+    <color name="purple_200">#FFBB86FC</color>
+           ~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:5: Warning: The resource R.color.purple_500 appears to be unused [UnusedResources]
+    <color name="purple_500">#FF6200EE</color>
+           ~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:6: Warning: The resource R.color.purple_700 appears to be unused [UnusedResources]
+    <color name="purple_700">#FF3700B3</color>
+           ~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:7: Warning: The resource R.color.teal_200 appears to be unused [UnusedResources]
+    <color name="teal_200">#FF03DAC5</color>
+           ~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:8: Warning: The resource R.color.teal_700 appears to be unused [UnusedResources]
+    <color name="teal_700">#FF018786</color>
+           ~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:9: Warning: The resource R.color.black appears to be unused [UnusedResources]
+    <color name="black">#FF000000</color>
+           ~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:10: Warning: The resource R.color.white appears to be unused [UnusedResources]
+    <color name="white">#FFFFFFFF</color>
+           ~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:17: Warning: The resource R.color.md3_onPrimaryContainer appears to be unused [UnusedResources]
+    <color name="md3_onPrimaryContainer">#FF21005D</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:23: Warning: The resource R.color.md3_onSecondaryContainer appears to be unused [UnusedResources]
+    <color name="md3_onSecondaryContainer">#FF1D192B</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:26: Warning: The resource R.color.md3_tertiary appears to be unused [UnusedResources]
+    <color name="md3_tertiary">#FF7D5260</color>
+           ~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:27: Warning: The resource R.color.md3_onTertiary appears to be unused [UnusedResources]
+    <color name="md3_onTertiary">#FFFFFFFF</color>
+           ~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:28: Warning: The resource R.color.md3_tertiaryContainer appears to be unused [UnusedResources]
+    <color name="md3_tertiaryContainer">#FFFFD8E4</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:29: Warning: The resource R.color.md3_onTertiaryContainer appears to be unused [UnusedResources]
+    <color name="md3_onTertiaryContainer">#FF31111D</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:32: Warning: The resource R.color.md3_surface appears to be unused [UnusedResources]
+    <color name="md3_surface">#FFFFFBFE</color>
+           ~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:33: Warning: The resource R.color.md3_onSurface appears to be unused [UnusedResources]
+    <color name="md3_onSurface">#FF1C1B1F</color>
+           ~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:34: Warning: The resource R.color.md3_surfaceVariant appears to be unused [UnusedResources]
+    <color name="md3_surfaceVariant">#FFE7E0EC</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:35: Warning: The resource R.color.md3_onSurfaceVariant appears to be unused [UnusedResources]
+    <color name="md3_onSurfaceVariant">#FF49454F</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:38: Warning: The resource R.color.md3_error appears to be unused [UnusedResources]
+    <color name="md3_error">#FFB3261E</color>
+           ~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:39: Warning: The resource R.color.md3_onError appears to be unused [UnusedResources]
+    <color name="md3_onError">#FFFFFFFF</color>
+           ~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:40: Warning: The resource R.color.md3_errorContainer appears to be unused [UnusedResources]
+    <color name="md3_errorContainer">#FFF9DEDC</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:41: Warning: The resource R.color.md3_onErrorContainer appears to be unused [UnusedResources]
+    <color name="md3_onErrorContainer">#FF410E0B</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:44: Warning: The resource R.color.md3_outline appears to be unused [UnusedResources]
+    <color name="md3_outline">#FF79747E</color>
+           ~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:45: Warning: The resource R.color.md3_outlineVariant appears to be unused [UnusedResources]
+    <color name="md3_outlineVariant">#FFCAC4D0</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:52: Warning: The resource R.color.md3_onPrimaryContainer_dark appears to be unused [UnusedResources]
+    <color name="md3_onPrimaryContainer_dark">#FFEADDFF</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:58: Warning: The resource R.color.md3_onSecondaryContainer_dark appears to be unused [UnusedResources]
+    <color name="md3_onSecondaryContainer_dark">#FFE8DEF8</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:61: Warning: The resource R.color.md3_tertiary_dark appears to be unused [UnusedResources]
+    <color name="md3_tertiary_dark">#FFEFB8C8</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:62: Warning: The resource R.color.md3_onTertiary_dark appears to be unused [UnusedResources]
+    <color name="md3_onTertiary_dark">#FF492532</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:63: Warning: The resource R.color.md3_tertiaryContainer_dark appears to be unused [UnusedResources]
+    <color name="md3_tertiaryContainer_dark">#FF633B48</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:64: Warning: The resource R.color.md3_onTertiaryContainer_dark appears to be unused [UnusedResources]
+    <color name="md3_onTertiaryContainer_dark">#FFFFD8E4</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:67: Warning: The resource R.color.md3_surface_dark appears to be unused [UnusedResources]
+    <color name="md3_surface_dark">#FF141218</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:68: Warning: The resource R.color.md3_onSurface_dark appears to be unused [UnusedResources]
+    <color name="md3_onSurface_dark">#FFE6E1E5</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:69: Warning: The resource R.color.md3_surfaceVariant_dark appears to be unused [UnusedResources]
+    <color name="md3_surfaceVariant_dark">#FF49454F</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:70: Warning: The resource R.color.md3_onSurfaceVariant_dark appears to be unused [UnusedResources]
+    <color name="md3_onSurfaceVariant_dark">#FFCAC4D0</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:73: Warning: The resource R.color.md3_error_dark appears to be unused [UnusedResources]
+    <color name="md3_error_dark">#FFFFB4AB</color>
+           ~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:74: Warning: The resource R.color.md3_onError_dark appears to be unused [UnusedResources]
+    <color name="md3_onError_dark">#FF690005</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:75: Warning: The resource R.color.md3_errorContainer_dark appears to be unused [UnusedResources]
+    <color name="md3_errorContainer_dark">#FF93000A</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:76: Warning: The resource R.color.md3_onErrorContainer_dark appears to be unused [UnusedResources]
+    <color name="md3_onErrorContainer_dark">#FFFFDAD6</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:79: Warning: The resource R.color.md3_outline_dark appears to be unused [UnusedResources]
+    <color name="md3_outline_dark">#FF938F99</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/colors.xml:80: Warning: The resource R.color.md3_outlineVariant_dark appears to be unused [UnusedResources]
+    <color name="md3_outlineVariant_dark">#FF49454F</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:7: Warning: The resource R.string.welcome_title appears to be unused [UnusedResources]
+    <string name="welcome_title">AI 写作助手</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:8: Warning: The resource R.string.welcome_subtitle appears to be unused [UnusedResources]
+    <string name="welcome_subtitle">输入一次，获取 3 种不同风格的文本</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:11: Warning: The resource R.string.nav_dashboard appears to be unused [UnusedResources]
+    <string name="nav_dashboard">仪表盘</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:12: Warning: The resource R.string.nav_presets appears to be unused [UnusedResources]
+    <string name="nav_presets">预设管理</string>
+            ~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:13: Warning: The resource R.string.nav_settings appears to be unused [UnusedResources]
+    <string name="nav_settings">设置</string>
+            ~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:16: Warning: The resource R.string.action_save appears to be unused [UnusedResources]
+    <string name="action_save">保存</string>
+            ~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:17: Warning: The resource R.string.action_cancel appears to be unused [UnusedResources]
+    <string name="action_cancel">取消</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:18: Warning: The resource R.string.action_delete appears to be unused [UnusedResources]
+    <string name="action_delete">删除</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:19: Warning: The resource R.string.action_edit appears to be unused [UnusedResources]
+    <string name="action_edit">编辑</string>
+            ~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:20: Warning: The resource R.string.action_copy appears to be unused [UnusedResources]
+    <string name="action_copy">复制</string>
+            ~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:21: Warning: The resource R.string.action_close appears to be unused [UnusedResources]
+    <string name="action_close">关闭</string>
+            ~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:24: Warning: The resource R.string.permission_overlay appears to be unused [UnusedResources]
+    <string name="permission_overlay">悬浮窗权限</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:25: Warning: The resource R.string.permission_accessibility appears to be unused [UnusedResources]
+    <string name="permission_accessibility">无障碍服务</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:26: Warning: The resource R.string.permission_notification appears to be unused [UnusedResources]
+    <string name="permission_notification">通知权限</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:29: Warning: The resource R.string.error_network appears to be unused [UnusedResources]
+    <string name="error_network">网络连接错误</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:30: Warning: The resource R.string.error_api_key appears to be unused [UnusedResources]
+    <string name="error_api_key">API 密钥无效</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:31: Warning: The resource R.string.error_generation_failed appears to be unused [UnusedResources]
+    <string name="error_generation_failed">文本生成失败</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:34: Warning: The resource R.string.success_copied appears to be unused [UnusedResources]
+    <string name="success_copied">已复制到剪贴板</string>
+            ~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:35: Warning: The resource R.string.success_inserted appears to be unused [UnusedResources]
+    <string name="success_inserted">文本已插入</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/app/src/main/res/values/strings.xml:36: Warning: The resource R.string.success_saved appears to be unused [UnusedResources]
+    <string name="success_saved">保存成功</string>
+            ~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedResources":
+   Unused resources make applications larger and slow down builds.
+
+
+   The unused resource check can ignore tests. If you want to include
+   resources that are only referenced from tests, consider packaging them in a
+   test source set instead.
+
+   You can include test sources in the unused resource check by setting the
+   system property lint.unused-resources.include-tests =true, and to exclude
+   them (usually for performance reasons), use
+   lint.unused-resources.exclude-tests =true.
+   ,
+
+/workspace/app/src/main/res/mipmap-hdpi/ic_launcher.xml:2: Warning: The application adaptive icon is missing a monochrome tag [MonochromeLauncherIcon]
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+^
+/workspace/app/src/main/res/mipmap-hdpi/ic_launcher_round.xml:2: Warning: The application adaptive roundIcon is missing a monochrome tag [MonochromeLauncherIcon]
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+^
+
+   Explanation for issues of type "MonochromeLauncherIcon":
+   If android:roundIcon and android:icon are both in your manifest, you must
+   either remove the reference to android:roundIcon if it is not needed; or,
+   supply the monochrome icon in the drawable defined by the android:roundIcon
+   and android:icon attribute.
+
+   For example, if android:roundIcon and android:icon are both in the
+   manifest, a launcher might choose to use android:roundIcon over
+   android:icon to display the adaptive app icon. Therefore, your themed
+   application iconwill not show if your monochrome attribute is not also
+   specified in android:roundIcon.
+
+/workspace/app/src/main/java/com/aiwriter/assistant/service/FloatingWindowService.kt:182: Warning: onTouch lambda should call View#performClick when a click is detected [ClickableViewAccessibility]
+        view.setOnTouchListener { _, event ->
+                                ^
+
+   Explanation for issues of type "ClickableViewAccessibility":
+   If a View that overrides onTouchEvent or uses an OnTouchListener does not
+   also implement performClick and call it when clicks are detected, the View
+   may not handle accessibility actions properly. Logic handling the click
+   actions should ideally be placed in View#performClick as some accessibility
+   services invoke performClick when a click action should occur.
+
+0 errors, 85 warnings
