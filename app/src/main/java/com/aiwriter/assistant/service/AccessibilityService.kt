@@ -21,7 +21,7 @@ class AccessibilityService : AccessibilityService() {
         fun insertText(text: String): Boolean {
             val service = getInstance()
             return if (service != null) {
-                service.doInsertText(text)
+                service.insertTextDirectly(text)
             } else {
                 false
             }
@@ -31,6 +31,30 @@ class AccessibilityService : AccessibilityService() {
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("AI Writing Assistant", text)
             clipboard.setPrimaryClip(clip)
+        }
+        
+        private fun insertTextDirectly(text: String): Boolean {
+            val service = getInstance()
+            return if (service != null) {
+                try {
+                    // Method 1: Try to find focused text field and insert text
+                    val focusedNode = service.findFocusedEditableNode(service.rootInActiveWindow)
+                    if (focusedNode != null) {
+                        service.insertTextToNode(focusedNode, text)
+                        return true
+                    }
+                    
+                    // Method 2: Use clipboard and paste
+                    copyToClipboard(service, text)
+                    // Note: GLOBAL_ACTION_PASTE is not available in all Android versions
+                    // Using clipboard method instead
+                    true
+                } catch (e: Exception) {
+                    false
+                }
+            } else {
+                false
+            }
         }
     }
     
@@ -51,25 +75,6 @@ class AccessibilityService : AccessibilityService() {
     
     override fun onInterrupt() {
         // Handle service interruption
-    }
-    
-    internal fun doInsertText(text: String): Boolean {
-        return try {
-            // Method 1: Try to find focused text field and insert text
-            val focusedNode = findFocusedEditableNode(rootInActiveWindow)
-            if (focusedNode != null) {
-                insertTextToNode(focusedNode, text)
-                return true
-            }
-            
-            // Method 2: Use clipboard and paste
-            copyToClipboard(this, text)
-            // Note: GLOBAL_ACTION_PASTE is not available in all Android versions
-            // Using clipboard method instead
-            true
-        } catch (e: Exception) {
-            false
-        }
     }
     
     private fun findFocusedEditableNode(root: AccessibilityNodeInfo?): AccessibilityNodeInfo? {
