@@ -1,0 +1,326 @@
+package com.aiwriter.assistant.ui.main
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aiwriter.assistant.data.model.ApiProvider
+import com.aiwriter.assistant.data.model.WorkMode
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: SettingsViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("设置") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "返回")
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Work Mode Section
+            SettingsSection(title = "工作模式") {
+                WorkModeSelection(
+                    currentMode = uiState.workMode,
+                    onModeChanged = viewModel::updateWorkMode
+                )
+            }
+            
+            // API Configuration Section
+            SettingsSection(title = "AI 模型配置") {
+                ApiConfigurationSection(
+                    currentProvider = uiState.currentApiProvider,
+                    apiConfigs = uiState.apiConfigs,
+                    onProviderChanged = viewModel::updateCurrentProvider,
+                    onConfigChanged = viewModel::updateApiConfig,
+                    onTestConnection = viewModel::testConnection
+                )
+            }
+            
+            // App Settings Section
+            SettingsSection(title = "应用设置") {
+                AppSettingsSection(
+                    isDarkMode = uiState.isDarkMode,
+                    isVibrationEnabled = uiState.isVibrationEnabled,
+                    onDarkModeChanged = viewModel::updateDarkMode,
+                    onVibrationChanged = viewModel::updateVibration
+                )
+            }
+            
+            // Data Management Section
+            SettingsSection(title = "数据管理") {
+                DataManagementSection(
+                    onClearHistory = viewModel::clearHistory,
+                    onResetApp = viewModel::resetApp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SettingsSection(
+    title: String,
+    content: @Composable () -> Unit
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            content()
+        }
+    }
+}
+
+@Composable
+private fun WorkModeSelection(
+    currentMode: WorkMode,
+    onModeChanged: (WorkMode) -> Unit
+) {
+    Column {
+        WorkMode.values().forEach { mode ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = currentMode == mode,
+                        onClick = { onModeChanged(mode) }
+                    )
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = currentMode == mode,
+                    onClick = { onModeChanged(mode) }
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = mode.displayName,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = mode.description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ApiConfigurationSection(
+    currentProvider: ApiProvider,
+    apiConfigs: Map<ApiProvider, com.aiwriter.assistant.data.model.ApiConfig>,
+    onProviderChanged: (ApiProvider) -> Unit,
+    onConfigChanged: (com.aiwriter.assistant.data.model.ApiConfig) -> Unit,
+    onTestConnection: (com.aiwriter.assistant.data.model.ApiConfig) -> Unit
+) {
+    Column {
+        Text(
+            text = "当前提供商",
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.Medium
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        ApiProvider.values().forEach { provider ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = currentProvider == provider,
+                        onClick = { onProviderChanged(provider) }
+                    )
+                    .padding(vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = currentProvider == provider,
+                    onClick = { onProviderChanged(provider) }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = provider.displayName,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                
+                apiConfigs[provider]?.let {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        Icons.Default.CheckCircle,
+                        contentDescription = "已配置",
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Button(
+            onClick = { /* Open API config dialog */ },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("配置 ${currentProvider.displayName}")
+        }
+    }
+}
+
+@Composable
+private fun AppSettingsSection(
+    isDarkMode: Boolean,
+    isVibrationEnabled: Boolean,
+    onDarkModeChanged: (Boolean) -> Unit,
+    onVibrationChanged: (Boolean) -> Unit
+) {
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "夜间模式",
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Switch(
+                checked = isDarkMode,
+                onCheckedChange = onDarkModeChanged
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(12.dp))
+        
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "震动反馈",
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Switch(
+                checked = isVibrationEnabled,
+                onCheckedChange = onVibrationChanged
+            )
+        }
+    }
+}
+
+@Composable
+private fun DataManagementSection(
+    onClearHistory: () -> Unit,
+    onResetApp: () -> Unit
+) {
+    var showClearDialog by remember { mutableStateOf(false) }
+    var showResetDialog by remember { mutableStateOf(false) }
+    
+    Column {
+        OutlinedButton(
+            onClick = { showClearDialog = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("清除历史记录")
+        }
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        OutlinedButton(
+            onClick = { showResetDialog = true },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.error
+            )
+        ) {
+            Text("重置应用")
+        }
+    }
+    
+    if (showClearDialog) {
+        AlertDialog(
+            onDismissRequest = { showClearDialog = false },
+            title = { Text("确认清除") },
+            text = { Text("这将删除所有生成的文本历史记录，此操作无法撤销。") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onClearHistory()
+                        showClearDialog = false
+                    }
+                ) {
+                    Text("确认")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showClearDialog = false }) {
+                    Text("取消")
+                }
+            }
+        )
+    }
+    
+    if (showResetDialog) {
+        AlertDialog(
+            onDismissRequest = { showResetDialog = false },
+            title = { Text("确认重置") },
+            text = { Text("这将删除所有数据并重置应用到初始状态，此操作无法撤销。") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onResetApp()
+                        showResetDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("确认重置")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showResetDialog = false }) {
+                    Text("取消")
+                }
+            }
+        )
+    }
+}
