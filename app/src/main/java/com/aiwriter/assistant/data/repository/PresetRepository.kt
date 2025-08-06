@@ -3,7 +3,7 @@ package com.aiwriter.assistant.data.repository
 import com.aiwriter.assistant.data.database.dao.WritingPresetDao
 import com.aiwriter.assistant.data.model.WritingPreset
 import kotlinx.coroutines.flow.Flow
-import java.util.*
+import java.util.UUID
 
 class PresetRepository(private val presetDao: WritingPresetDao) {
     

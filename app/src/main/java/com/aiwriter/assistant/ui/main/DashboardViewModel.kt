@@ -8,7 +8,12 @@ import com.aiwriter.assistant.data.model.GeneratedText
 import com.aiwriter.assistant.data.model.WorkMode
 import com.aiwriter.assistant.data.repository.PresetRepository
 import com.aiwriter.assistant.utils.PermissionHelper
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class DashboardViewModel : ViewModel() {
