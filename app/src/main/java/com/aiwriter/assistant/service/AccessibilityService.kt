@@ -19,7 +19,12 @@ class AccessibilityService : AccessibilityService() {
         fun isServiceEnabled(): Boolean = instance != null
         
         fun insertText(text: String): Boolean {
-            return getInstance()?.performTextInsertion(text) ?: false
+            val service = getInstance()
+            return if (service != null) {
+                service.performTextInsertion(text)
+            } else {
+                false
+            }
         }
         
         fun copyToClipboard(context: Context, text: String) {
