@@ -1,6 +1,10 @@
 package com.aiwriter.assistant.data.database.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.aiwriter.assistant.data.model.GeneratedText
 import kotlinx.coroutines.flow.Flow
 

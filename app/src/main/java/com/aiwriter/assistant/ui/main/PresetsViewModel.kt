@@ -2,17 +2,19 @@ package com.aiwriter.assistant.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aiwriter.assistant.AIWriterApplication
 import com.aiwriter.assistant.data.model.WritingPreset
 import com.aiwriter.assistant.data.repository.PresetRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.UUID
 
 class PresetsViewModel : ViewModel() {
     
-    private val app = AIWriterApplication.instance
+    private val app = com.aiwriter.assistant.AIWriterApplication.instance
     private val presetRepository = PresetRepository(app.database.writingPresetDao())
     
     val presets = presetRepository.getAllPresets()
