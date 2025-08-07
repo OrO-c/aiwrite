@@ -47,7 +47,7 @@ class AccessibilityService : AccessibilityService() {
         // 服务中断处理
     }
 
-    internal fun insertTextInternal(text: String): Boolean {
+    fun insertTextInternal(text: String): Boolean {
         return try {
             val focusedNode = findFocusedEditableNode(rootInActiveWindow)
             if (focusedNode != null) {
