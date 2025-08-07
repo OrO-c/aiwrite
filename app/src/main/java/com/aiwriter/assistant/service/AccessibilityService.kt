@@ -4,29 +4,23 @@ import android.accessibilityservice.AccessibilityService
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
-import android.os.Binder
-import android.os.IBinder
+import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.os.bundleOf
 
 class AccessibilityService : AccessibilityService() {
-
-    // 1. Binder 实现，外部通过 bindService 拿到 binder 调用 insertText
-    inner class LocalBinder : Binder() {
-        fun insertText(text: String): Boolean = insertTextInternal(text)
-        fun isServiceEnabled(): Boolean = instance != null
-    }
-
-    private val binder = LocalBinder()
-
     companion object {
-        // 只做实例管理
-        @Volatile
         private var instance: AccessibilityService? = null
 
         fun getInstance(): AccessibilityService? = instance
+
+        fun isServiceEnabled(): Boolean = instance != null
+
+        fun insertText(text: String): Boolean {
+            val service = getInstance()
+            return service?.insertTextInternal(text) ?: false
+        }
 
         fun copyToClipboard(context: Context, text: String) {
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -34,8 +28,6 @@ class AccessibilityService : AccessibilityService() {
             clipboard.setPrimaryClip(clip)
         }
     }
-
-    override fun onBind(intent: Intent?): IBinder = binder
 
     override fun onServiceConnected() {
         super.onServiceConnected()
@@ -55,8 +47,7 @@ class AccessibilityService : AccessibilityService() {
         // 服务中断处理
     }
 
-    // 2. 业务逻辑只在 Service 内部
-    private fun insertTextInternal(text: String): Boolean {
+    fun insertTextInternal(text: String): Boolean {
         return try {
             val focusedNode = findFocusedEditableNode(rootInActiveWindow)
             if (focusedNode != null) {
@@ -70,7 +61,6 @@ class AccessibilityService : AccessibilityService() {
         }
     }
 
-    // 递归查找当前窗口中获得焦点且可编辑的节点
     private fun findFocusedEditableNode(root: AccessibilityNodeInfo?): AccessibilityNodeInfo? {
         root ?: return null
         if (root.isFocused && root.isEditable) return root
@@ -88,7 +78,6 @@ class AccessibilityService : AccessibilityService() {
         return null
     }
 
-    // 向指定节点插入文本
     private fun insertTextToNode(node: AccessibilityNodeInfo, text: String): Boolean {
         return try {
             val arguments = bundleOf(
