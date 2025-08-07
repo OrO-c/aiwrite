@@ -27,6 +27,25 @@ class AccessibilityService : AccessibilityService() {
             }
         }
         
+        private fun AccessibilityService.insertTextInternal(text: String): Boolean {
+            return try {
+                // Method 1: Try to find focused text field and insert text
+                val focusedNode = this.findFocusedEditableNode(rootInActiveWindow)
+                if (focusedNode != null) {
+                    this.insertTextToNode(focusedNode, text)
+                    return true
+                }
+                
+                // Method 2: Use clipboard and paste
+                copyToClipboard(this, text)
+                // Note: GLOBAL_ACTION_PASTE is not available in all Android versions
+                // Using clipboard method instead
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+        
         fun copyToClipboard(context: Context, text: String) {
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("AI Writing Assistant", text)
@@ -53,24 +72,7 @@ class AccessibilityService : AccessibilityService() {
         // Handle service interruption
     }
     
-    private fun insertTextInternal(text: String): Boolean {
-        return try {
-            // Method 1: Try to find focused text field and insert text
-            val focusedNode = findFocusedEditableNode(rootInActiveWindow)
-            if (focusedNode != null) {
-                insertTextToNode(focusedNode, text)
-                return true
-            }
-            
-            // Method 2: Use clipboard and paste
-            copyToClipboard(this, text)
-            // Note: GLOBAL_ACTION_PASTE is not available in all Android versions
-            // Using clipboard method instead
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
+
     
     private fun findFocusedEditableNode(root: AccessibilityNodeInfo?): AccessibilityNodeInfo? {
         root ?: return null
