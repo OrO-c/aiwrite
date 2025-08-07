@@ -21,7 +21,7 @@ class AccessibilityService : AccessibilityService() {
         fun insertText(text: String): Boolean {
             val service = getInstance()
             return if (service != null) {
-                service.doInsertText(text)
+                service.insertTextInternal(text)
             } else {
                 false
             }
@@ -53,7 +53,7 @@ class AccessibilityService : AccessibilityService() {
         // Handle service interruption
     }
     
-    internal fun doInsertText(text: String): Boolean {
+    internal fun insertTextInternal(text: String): Boolean {
         return try {
             // Method 1: Try to find focused text field and insert text
             val focusedNode = findFocusedEditableNode(rootInActiveWindow)
