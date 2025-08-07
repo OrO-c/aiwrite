@@ -3,11 +3,7 @@ package com.aiwriter.assistant.ui.floating
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.ComponentName
-import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -64,43 +60,16 @@ import com.aiwriter.assistant.service.AccessibilityService
 import com.aiwriter.assistant.ui.theme.AIWritingAssistantTheme
 
 class FloatingActivity : ComponentActivity() {
-    private var accessibilityBinder: AccessibilityService.LocalBinder? = null
-    private var isServiceBound = false
-
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            accessibilityBinder = service as? AccessibilityService.LocalBinder
-            isServiceBound = true
-        }
-        override fun onServiceDisconnected(name: ComponentName?) {
-            accessibilityBinder = null
-            isServiceBound = false
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val mode = intent.getStringExtra("mode") ?: "floating"
-        // 绑定无障碍服务
-        val serviceIntent = Intent(this, AccessibilityService::class.java)
-        bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-
         setContent {
             AIWritingAssistantTheme {
                 FloatingWritingInterface(
                     mode = mode,
-                    onClose = { finish() },
-                    accessibilityBinder = accessibilityBinder
+                    onClose = { finish() }
                 )
             }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (isServiceBound) {
-            unbindService(serviceConnection)
-            isServiceBound = false
         }
     }
 }
@@ -109,7 +78,6 @@ class FloatingActivity : ComponentActivity() {
 fun FloatingWritingInterface(
     mode: String,
     onClose: () -> Unit,
-    accessibilityBinder: AccessibilityService.LocalBinder?,
     viewModel: FloatingViewModel = viewModel()
 ) {
     val context = LocalContext.current
@@ -156,8 +124,8 @@ fun FloatingWritingInterface(
                                 Toast.makeText(context, "已复制到剪贴板", Toast.LENGTH_SHORT).show()
                             },
                             onInsertText = { text ->
-                                if (mode == "floating" && accessibilityBinder?.isServiceEnabled() == true) {
-                                    val success = accessibilityBinder.insertText(text)
+                                if (mode == "floating" && AccessibilityService.isServiceEnabled()) {
+                                    val success = AccessibilityService.insertText(text)
                                     if (success) {
                                         Toast.makeText(context, "文本已插入", Toast.LENGTH_SHORT).show()
                                         onClose()
