@@ -74,7 +74,7 @@ class AccessibilityService : AccessibilityService() {
     
 
     
-    private fun findFocusedEditableNode(root: AccessibilityNodeInfo?): AccessibilityNodeInfo? {
+    internal fun findFocusedEditableNode(root: AccessibilityNodeInfo?): AccessibilityNodeInfo? {
         root ?: return null
         
         // Check if current node is focused and editable
@@ -98,7 +98,7 @@ class AccessibilityService : AccessibilityService() {
         return null
     }
     
-    private fun insertTextToNode(node: AccessibilityNodeInfo, text: String): Boolean {
+    internal fun insertTextToNode(node: AccessibilityNodeInfo, text: String): Boolean {
         return try {
             // Method 1: Set text directly
             val arguments = bundleOf(
