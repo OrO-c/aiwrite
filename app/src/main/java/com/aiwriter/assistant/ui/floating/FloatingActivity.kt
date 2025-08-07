@@ -47,12 +47,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -65,12 +60,9 @@ import com.aiwriter.assistant.service.AccessibilityService
 import com.aiwriter.assistant.ui.theme.AIWritingAssistantTheme
 
 class FloatingActivity : ComponentActivity() {
-    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
         val mode = intent.getStringExtra("mode") ?: "floating"
-        
         setContent {
             AIWritingAssistantTheme {
                 FloatingWritingInterface(
@@ -90,7 +82,7 @@ fun FloatingWritingInterface(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    
+
     Dialog(onDismissRequest = onClose) {
         Card(
             modifier = Modifier
@@ -112,14 +104,11 @@ fun FloatingWritingInterface(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
-                    
                     IconButton(onClick = onClose) {
                         Icon(Icons.Default.Close, contentDescription = "关闭")
                     }
                 }
-                
                 Spacer(modifier = Modifier.height(16.dp))
-                
                 // Content based on current state
                 when {
                     uiState.isLoading -> {
