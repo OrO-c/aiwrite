@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aiwriter.assistant.data.model.WorkMode
-import com.aiwriter.assistant.service.AccessibilityService
+import com.aiwriter.assistant.service.AppAccessibilityService
 import com.aiwriter.assistant.ui.theme.AIWritingAssistantTheme
 
 class FloatingActivity : ComponentActivity() {
@@ -124,8 +124,8 @@ fun FloatingWritingInterface(
                                 Toast.makeText(context, "已复制到剪贴板", Toast.LENGTH_SHORT).show()
                             },
                             onInsertText = { text ->
-                                if (mode == "floating" && AccessibilityService.isServiceEnabled()) {
-                                    val success = AccessibilityService.insertText(text)
+                                if (mode == "floating" && AppAccessibilityService.isServiceEnabled()) {
+                                    val success = AppAccessibilityService.insertText(text)
                                     if (success) {
                                         Toast.makeText(context, "文本已插入", Toast.LENGTH_SHORT).show()
                                         onClose()
