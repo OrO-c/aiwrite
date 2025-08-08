@@ -348,9 +348,9 @@ private fun RecentTextCard(
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            // Versions preview
+            // Preview
             Text(
-                text = "${text.style1Label} ${text.version1.take(50)}${if (text.version1.length > 50) "..." else ""}",
+                text = text.version1.take(80) + if (text.version1.length > 80) "..." else "",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,

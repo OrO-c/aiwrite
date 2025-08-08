@@ -46,14 +46,14 @@ class AITextRepository {
         val fullPrompt = """
             $systemPrompt
             
-            请根据以下主题生成3个不同风格的文本版本，用 /FGX/ 分隔：
+            请根据以下主题生成精炼、可直接用于输入框的一段文本：
             
             主题：$input
             
             要求：
-            1. 第一版本：💡 创意版 - 富有创意和想象力
-            2. 第二版本：🔍 详细版 - 详细全面的描述
-            3. 第三版本：✂️ 简洁版 - 简洁明了的表达
+            - 语言清晰、自然，尽量减少多余铺陈
+            - 可直接复制粘贴或一键插入
+            - 若有必要，可适度分句，便于快速浏览
             
             格式：
             版本1内容
@@ -100,9 +100,9 @@ class AITextRepository {
         // Gemini API implementation would go here
         // For now, return a placeholder
         return Result.success(Triple(
-            "💡 创意版：$input（Gemini暂未实现）",
-            "🔍 详细版：$input（Gemini暂未实现）",
-            "✂️ 简洁版：$input（Gemini暂未实现）"
+            "$input（Gemini暂未实现）",
+            "",
+            ""
         ))
     }
     
