@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aiwriter.assistant.ui.main.MainActivity
 import com.aiwriter.assistant.ui.theme.AIWritingAssistantTheme
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 class OnboardingActivity : ComponentActivity() {
     
@@ -64,6 +66,7 @@ fun OnboardingScreen(
     viewModel: OnboardingViewModel = viewModel()
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     
     Scaffold { paddingValues ->
@@ -76,19 +79,19 @@ fun OnboardingScreen(
             when (page) {
                 0 -> WelcomePage(
                     onNext = {
-                        // Navigate to next page
+                        scope.launch { pagerState.animateScrollToPage(1) }
                     }
                 )
                 1 -> WorkModeSelectionPage(
                     viewModel = viewModel,
                     onNext = {
-                        // Navigate to next page
+                        scope.launch { pagerState.animateScrollToPage(2) }
                     }
                 )
                 2 -> ApiConfigurationPage(
                     viewModel = viewModel,
                     onNext = {
-                        // Navigate to next page
+                        scope.launch { pagerState.animateScrollToPage(3) }
                     }
                 )
                 3 -> CompletionPage(

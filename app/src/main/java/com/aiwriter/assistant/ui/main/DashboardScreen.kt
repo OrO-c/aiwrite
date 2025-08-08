@@ -21,6 +21,7 @@ import com.aiwriter.assistant.data.model.WorkMode
 import com.aiwriter.assistant.utils.PermissionHelper
 import java.text.SimpleDateFormat
 import java.util.*
+import android.app.Activity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +66,20 @@ fun DashboardScreen(
                 WorkModeStatusCard(
                     workMode = workMode,
                     missingPermissions = missingPermissions,
-                    onRequestPermissions = viewModel::requestPermissions,
+                    onRequestPermissions = {
+                        val activity = context as? Activity ?: return@WorkModeStatusCard
+                        when {
+                            missingPermissions.contains("悬浮窗权限") -> {
+                                PermissionHelper.requestOverlayPermission(activity)
+                            }
+                            missingPermissions.contains("无障碍服务") -> {
+                                PermissionHelper.requestAccessibilityPermission(activity)
+                            }
+                            missingPermissions.contains("通知权限") -> {
+                                PermissionHelper.requestNotificationPermission(activity)
+                            }
+                        }
+                    },
                     onChangeMode = { onNavigateToSettings() }
                 )
             }
