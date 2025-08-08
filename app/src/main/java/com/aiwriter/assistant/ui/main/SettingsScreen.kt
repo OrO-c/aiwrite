@@ -79,6 +79,15 @@ fun SettingsScreen(
                 )
             }
             
+            // Preset management entry tip
+            SettingsSection(title = "预设提示") {
+                Text(
+                    text = "自定义系统提示词时，如需生成多段结果用于对比，请在提示词中明确使用 /FGX/ 作为分隔指令（例如：按顺序输出三段内容并用 /FGX/ 分隔）。",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            
             // App Settings Section
             SettingsSection(title = "应用设置") {
                 AppSettingsSection(

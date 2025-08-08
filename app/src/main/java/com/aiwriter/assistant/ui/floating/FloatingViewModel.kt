@@ -35,6 +35,7 @@ class FloatingViewModel : ViewModel() {
     val uiState: StateFlow<FloatingUiState> = _uiState.asStateFlow()
     
     private var currentPresetObject: WritingPreset? = null
+    private var initializedDefaults = false
     
     init {
         loadPresets()
@@ -45,6 +46,14 @@ class FloatingViewModel : ViewModel() {
             try {
                 val presets = presetRepository.getAllPresets()
                 presets.collect { presetList ->
+                    if (presetList.isEmpty() && !initializedDefaults) {
+                        // Try initialize defaults once
+                        initializedDefaults = true
+                        try {
+                            presetRepository.initializeDefaultPresets()
+                            return@collect
+                        } catch (_: Exception) { /* ignore */ }
+                    }
                     val defaultPreset = presetList.find { it.isDefault } ?: presetList.firstOrNull()
                     _uiState.value = _uiState.value.copy(
                         availablePresets = presetList,

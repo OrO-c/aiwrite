@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.aiwriter.assistant.AIWriterApplication
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -33,13 +34,16 @@ fun AIWritingAssistantTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    // Override with user preference if set
+    val prefsDark = try { AIWriterApplication.instance.preferences.isDarkMode } catch (_: Exception) { darkTheme }
+    val useDark = prefsDark
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (useDark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
-        darkTheme -> DarkColorScheme
+        useDark -> DarkColorScheme
         else -> LightColorScheme
     }
     val view = LocalView.current
@@ -47,7 +51,8 @@ fun AIWritingAssistantTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            // Light status bar icons when NOT dark theme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !useDark
         }
     }
 

@@ -31,10 +31,6 @@ class PresetRepository(private val presetDao: WritingPresetDao) {
     }
     
     suspend fun initializeDefaultPresets() {
-        val existingPresets = presetDao.getAllPresets()
-        // Check if presets already exist to avoid duplicates
-        // This would need to be implemented with a count query
-        
         val defaultPresets = getDefaultPresetList()
         defaultPresets.forEach { preset ->
             insertPreset(preset)
