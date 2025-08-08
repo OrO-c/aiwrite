@@ -14,6 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.activity.compose.BackHandler
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
+import com.aiwriter.assistant.ui.onboarding.OnboardingActivity
 import com.aiwriter.assistant.data.model.ApiProvider
 import com.aiwriter.assistant.data.model.WorkMode
 
@@ -23,6 +27,8 @@ fun SettingsScreen(
     onNavigateBack: () -> Unit,
     viewModel: SettingsViewModel = viewModel()
 ) {
+    val context = LocalContext.current
+    BackHandler { onNavigateBack() }
     val uiState by viewModel.uiState.collectAsState()
     
     Scaffold(
@@ -49,7 +55,14 @@ fun SettingsScreen(
             SettingsSection(title = "工作模式") {
                 WorkModeSelection(
                     currentMode = uiState.workMode,
-                    onModeChanged = viewModel::updateWorkMode
+                    onModeChanged = { mode ->
+                        viewModel.updateWorkMode(mode)
+                        // After switching mode, guide user to permissions setup
+                        val intent = Intent(context, OnboardingActivity::class.java).apply {
+                            putExtra("startAt", "permissions")
+                        }
+                        context.startActivity(intent)
+                    }
                 )
             }
             
