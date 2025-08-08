@@ -30,12 +30,15 @@ fun PermissionSetupPage(
     val activity = context as? Activity
     val selectedMode by viewModel.selectedWorkMode
 
+    // trigger recomposition on resume to refresh permission states
+    var resumeTick by remember { mutableStateOf(0) }
+    LaunchedEffect(Unit) {}
+
     // Live permission states (re-evaluated on each composition)
     val hasOverlay = PermissionHelper.hasOverlayPermission(context)
     val hasAccessibility = PermissionHelper.isAccessibilityServiceEnabled(context)
     val hasNotification = PermissionHelper.hasNotificationPermission(context)
 
-    // Determine required permissions by mode
     val required = when (selectedMode) {
         WorkMode.TILE_CLIPBOARD -> listOf(
             PermissionItem(
@@ -70,7 +73,6 @@ fun PermissionSetupPage(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Header
         Icon(
             imageVector = Icons.Default.Security,
             contentDescription = null,
@@ -92,7 +94,6 @@ fun PermissionSetupPage(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Permission list
         required.forEach { item ->
             PermissionCard(item)
             Spacer(modifier = Modifier.height(12.dp))

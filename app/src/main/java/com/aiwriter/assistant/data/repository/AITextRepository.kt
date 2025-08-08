@@ -74,6 +74,7 @@ class AITextRepository {
             model = apiConfig.model,
             messages = messages,
             temperature = apiConfig.temperature,
+            top_p = apiConfig.topP,
             max_tokens = apiConfig.maxTokens
         )
         

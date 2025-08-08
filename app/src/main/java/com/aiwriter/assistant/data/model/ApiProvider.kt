@@ -18,6 +18,7 @@ data class ApiConfig(
         ApiProvider.CUSTOM -> ""
     },
     val temperature: Float = 0.7f,
+    val topP: Float = 1.0f,
     val maxTokens: Int = 2000,
     val streamResponse: Boolean = false
 )

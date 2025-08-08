@@ -86,15 +86,10 @@ class SettingsViewModel : ViewModel() {
         viewModelScope.launch {
             // Clear database
             database.generatedTextDao().deleteAllTexts()
-            database.writingPresetDao().run {
-                // This would need proper implementation to clear presets
-                // while preserving default ones
-            }
+            database.writingPresetDao().deleteAllPresets()
             
             // Clear preferences
             preferences.clearAllData()
-            
-            // Restart app or navigate to onboarding
         }
     }
 }

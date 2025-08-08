@@ -30,4 +30,7 @@ interface WritingPresetDao {
     
     @Query("UPDATE writing_presets SET isDefault = 0")
     suspend fun clearDefaultFlags()
+
+    @Query("DELETE FROM writing_presets")
+    suspend fun deleteAllPresets()
 }
