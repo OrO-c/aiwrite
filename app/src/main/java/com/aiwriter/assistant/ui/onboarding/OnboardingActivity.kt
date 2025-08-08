@@ -79,19 +79,19 @@ fun OnboardingScreen(
             when (page) {
                 0 -> WelcomePage(
                     onNext = {
-                        scope.launch { pagerState.animateScrollToPage(1) }
+                        scope.launch { pagerState.scrollToPage(1) }
                     }
                 )
                 1 -> WorkModeSelectionPage(
                     viewModel = viewModel,
                     onNext = {
-                        scope.launch { pagerState.animateScrollToPage(2) }
+                        scope.launch { pagerState.scrollToPage(2) }
                     }
                 )
                 2 -> ApiConfigurationPage(
                     viewModel = viewModel,
                     onNext = {
-                        scope.launch { pagerState.animateScrollToPage(3) }
+                        scope.launch { pagerState.scrollToPage(3) }
                     }
                 )
                 3 -> CompletionPage(
