@@ -10,6 +10,8 @@ import com.aiwriter.assistant.data.model.GeneratedText
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.UUID
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.TimeoutCancellationException
 
 class AITextRepository {
     
@@ -75,21 +77,33 @@ class AITextRepository {
             max_tokens = apiConfig.maxTokens
         )
         
-        val response = openAIService.generateText(
-            url = apiConfig.endpoint,
-            authorization = "Bearer ${apiConfig.apiKey}",
-            request = request
-        )
-        
-        val content = response.choices.firstOrNull()?.message?.content
-            ?: throw Exception("没有收到AI响应")
-        
-        val versions = content.split("/FGX/").map { it.trim() }
-        if (versions.size < 3) {
-            throw Exception("AI响应格式不正确，未能生成3个版本")
+        return try {
+            val response = withTimeout(15_000L) {
+                openAIService.generateText(
+                    url = apiConfig.endpoint,
+                    authorization = "Bearer ${apiConfig.apiKey}",
+                    request = request
+                )
+            }
+            
+            val content = response.choices.firstOrNull()?.message?.content
+                ?: return Result.failure(Exception("没有收到AI响应"))
+            
+            val versions = content.split("/FGX/").map { it.trim() }
+            val v1 = versions.getOrNull(0) ?: ""
+            val v2 = versions.getOrNull(1) ?: ""
+            val v3 = versions.getOrNull(2) ?: ""
+            
+            if (v1.isBlank()) {
+                return Result.failure(Exception("AI响应内容为空"))
+            }
+            
+            Result.success(Triple(v1, v2, v3))
+        } catch (e: TimeoutCancellationException) {
+            Result.failure(Exception("请求超时，请稍后重试"))
+        } catch (e: Exception) {
+            Result.failure(e)
         }
-        
-        return Result.success(Triple(versions[0], versions[1], versions[2]))
     }
     
     private suspend fun generateWithGemini(

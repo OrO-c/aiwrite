@@ -45,13 +45,6 @@ fun DashboardScreen(
                     }
                 }
             )
-        },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = viewModel::startNewGeneration,
-                icon = { Icon(Icons.Default.Edit, contentDescription = null) },
-                text = { Text("新建生成") }
-            )
         }
     ) { paddingValues ->
         LazyColumn(
@@ -281,7 +274,7 @@ private fun EmptyStateCard() {
             )
             
             Text(
-                text = "点击右下角的按钮开始你的第一次写作",
+                text = "可以通过磁贴或悬浮球快速开始",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
