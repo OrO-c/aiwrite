@@ -10,6 +10,8 @@ import com.aiwriter.assistant.data.model.GeneratedText
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.UUID
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.TimeoutCancellationException
 
 class AITextRepository {
     
@@ -46,14 +48,14 @@ class AITextRepository {
         val fullPrompt = """
             $systemPrompt
             
-            请根据以下主题生成3个不同风格的文本版本，用 /FGX/ 分隔：
+            请根据以下主题生成精炼、可直接用于输入框的一段文本：
             
             主题：$input
             
             要求：
-            1. 第一版本：💡 创意版 - 富有创意和想象力
-            2. 第二版本：🔍 详细版 - 详细全面的描述
-            3. 第三版本：✂️ 简洁版 - 简洁明了的表达
+            - 语言清晰、自然，尽量减少多余铺陈
+            - 可直接复制粘贴或一键插入
+            - 若有必要，可适度分句，便于快速浏览
             
             格式：
             版本1内容
@@ -75,21 +77,33 @@ class AITextRepository {
             max_tokens = apiConfig.maxTokens
         )
         
-        val response = openAIService.generateText(
-            url = apiConfig.endpoint,
-            authorization = "Bearer ${apiConfig.apiKey}",
-            request = request
-        )
-        
-        val content = response.choices.firstOrNull()?.message?.content
-            ?: throw Exception("没有收到AI响应")
-        
-        val versions = content.split("/FGX/").map { it.trim() }
-        if (versions.size < 3) {
-            throw Exception("AI响应格式不正确，未能生成3个版本")
+        return try {
+            val response = withTimeout(15_000L) {
+                openAIService.generateText(
+                    url = apiConfig.endpoint,
+                    authorization = "Bearer ${apiConfig.apiKey}",
+                    request = request
+                )
+            }
+            
+            val content = response.choices.firstOrNull()?.message?.content
+                ?: return Result.failure(Exception("没有收到AI响应"))
+            
+            val versions = content.split("/FGX/").map { it.trim() }
+            val v1 = versions.getOrNull(0) ?: ""
+            val v2 = versions.getOrNull(1) ?: ""
+            val v3 = versions.getOrNull(2) ?: ""
+            
+            if (v1.isBlank()) {
+                return Result.failure(Exception("AI响应内容为空"))
+            }
+            
+            Result.success(Triple(v1, v2, v3))
+        } catch (e: TimeoutCancellationException) {
+            Result.failure(Exception("请求超时，请稍后重试"))
+        } catch (e: Exception) {
+            Result.failure(e)
         }
-        
-        return Result.success(Triple(versions[0], versions[1], versions[2]))
     }
     
     private suspend fun generateWithGemini(
@@ -100,9 +114,9 @@ class AITextRepository {
         // Gemini API implementation would go here
         // For now, return a placeholder
         return Result.success(Triple(
-            "💡 创意版：$input（Gemini暂未实现）",
-            "🔍 详细版：$input（Gemini暂未实现）",
-            "✂️ 简洁版：$input（Gemini暂未实现）"
+            "$input（Gemini暂未实现）",
+            "",
+            ""
         ))
     }
     

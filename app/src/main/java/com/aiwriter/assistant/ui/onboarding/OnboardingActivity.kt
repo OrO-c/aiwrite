@@ -38,6 +38,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aiwriter.assistant.ui.main.MainActivity
 import com.aiwriter.assistant.ui.theme.AIWritingAssistantTheme
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.LaunchedEffect
 
 class OnboardingActivity : ComponentActivity() {
     
@@ -46,11 +49,13 @@ class OnboardingActivity : ComponentActivity() {
         
         setContent {
             AIWritingAssistantTheme {
+                val startAt = intent.getStringExtra("startAt")
                 OnboardingScreen(
                     onComplete = {
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
-                    }
+                    },
+                    startAt = startAt
                 )
             }
         }
@@ -61,10 +66,24 @@ class OnboardingActivity : ComponentActivity() {
 @Composable
 fun OnboardingScreen(
     onComplete: () -> Unit,
+    startAt: String? = null,
     viewModel: OnboardingViewModel = viewModel()
 ) {
-    val pagerState = rememberPagerState(pageCount = { 4 })
+    val pageCount = 5
+    val pagerState = rememberPagerState(pageCount = { pageCount })
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    // Jump to specific page if requested
+    LaunchedEffect(startAt) {
+        val index = when (startAt) {
+            "permissions" -> 2
+            "api" -> 3
+            "finish" -> 4
+            else -> 0
+        }
+        if (index != 0) pagerState.scrollToPage(index)
+    }
     
     Scaffold { paddingValues ->
         HorizontalPager(
@@ -75,23 +94,21 @@ fun OnboardingScreen(
         ) { page ->
             when (page) {
                 0 -> WelcomePage(
-                    onNext = {
-                        // Navigate to next page
-                    }
+                    onNext = { scope.launch { pagerState.scrollToPage(1) } }
                 )
                 1 -> WorkModeSelectionPage(
                     viewModel = viewModel,
-                    onNext = {
-                        // Navigate to next page
-                    }
+                    onNext = { scope.launch { pagerState.scrollToPage(2) } }
                 )
-                2 -> ApiConfigurationPage(
+                2 -> PermissionSetupPage(
                     viewModel = viewModel,
-                    onNext = {
-                        // Navigate to next page
-                    }
+                    onNext = { scope.launch { pagerState.scrollToPage(3) } }
                 )
-                3 -> CompletionPage(
+                3 -> ApiConfigurationPage(
+                    viewModel = viewModel,
+                    onNext = { scope.launch { pagerState.scrollToPage(4) } }
+                )
+                4 -> CompletionPage(
                     onComplete = {
                         viewModel.completeOnboarding()
                         onComplete()

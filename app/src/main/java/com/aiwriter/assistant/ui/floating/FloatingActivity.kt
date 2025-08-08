@@ -11,19 +11,24 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -50,13 +55,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aiwriter.assistant.data.model.WorkMode
-import com.aiwriter.assistant.service.AccessibilityService
+import com.aiwriter.assistant.service.AppAccessibilityService
 import com.aiwriter.assistant.ui.theme.AIWritingAssistantTheme
 
 class FloatingActivity : ComponentActivity() {
@@ -83,74 +89,91 @@ fun FloatingWritingInterface(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
-    Dialog(onDismissRequest = onClose) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
+    // Container with slide animations
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+        val cornerRadius = 20.dp
+        val targetHeightFraction = if (mode == "tile") 0.5f else 0.3f
+        val enter = if (mode == "tile") {
+            slideInVertically(initialOffsetY = { it }, animationSpec = tween(250)) + fadeIn(tween(200))
+        } else {
+            slideInVertically(initialOffsetY = { -it }, animationSpec = tween(250)) + fadeIn(tween(200))
+        }
+        val exit = if (mode == "tile") {
+            slideOutVertically(targetOffsetY = { it }, animationSpec = tween(200)) + fadeOut(tween(150))
+        } else {
+            slideOutVertically(targetOffsetY = { -it }, animationSpec = tween(200)) + fadeOut(tween(150))
+        }
+
+        AnimatedVisibility(visible = true, enter = enter, exit = exit) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(targetHeightFraction)
+                    .clip(RoundedCornerShape(topStart = cornerRadius, topEnd = cornerRadius))
+                    .padding(horizontal = 0.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
-                // Header
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "AI 写作助手",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    IconButton(onClick = onClose) {
-                        Icon(Icons.Default.Close, contentDescription = "关闭")
+                Column(modifier = Modifier.padding(16.dp)) {
+                    // Header: title centered, close on the right
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Spacer(modifier = Modifier.width(40.dp))
+                        Text(
+                            text = uiState.inputText.ifBlank { "AI 写作" },
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        IconButton(onClick = onClose) { Icon(Icons.Default.Close, contentDescription = "关闭") }
                     }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                // Content based on current state
-                when {
-                    uiState.isLoading -> {
-                        LoadingState()
-                    }
-                    uiState.generatedText != null -> {
-                        val generatedText = uiState.generatedText!!
-                        GeneratedTextDisplay(
-                            generatedText = generatedText,
-                            mode = mode,
-                            onCopyText = { text ->
-                                copyToClipboard(context, text)
-                                Toast.makeText(context, "已复制到剪贴板", Toast.LENGTH_SHORT).show()
-                            },
-                            onInsertText = { text ->
-                                if (mode == "floating" && AccessibilityService.isServiceEnabled()) {
-                                    val success = AccessibilityService.insertText(text)
-                                    if (success) {
-                                        Toast.makeText(context, "文本已插入", Toast.LENGTH_SHORT).show()
-                                        onClose()
-                                    } else {
-                                        copyToClipboard(context, text)
-                                        Toast.makeText(context, "插入失败，已复制到剪贴板", Toast.LENGTH_SHORT).show()
-                                    }
-                                } else {
-                                    copyToClipboard(context, text)
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    when {
+                        uiState.isLoading -> LoadingState()
+                        uiState.generatedText != null -> {
+                            val generated = uiState.generatedText!!
+                            GeneratedCompactDisplay(
+                                title = generated.input,
+                                text = generated.version1.ifBlank { "(无内容)" },
+                                mode = mode,
+                                onCopyText = {
+                                    copyToClipboard(context, generated.version1)
                                     Toast.makeText(context, "已复制到剪贴板", Toast.LENGTH_SHORT).show()
-                                }
-                            },
-                            onRegenerate = viewModel::regenerateText,
-                            onNewGeneration = viewModel::resetToInput
-                        )
-                    }
-                    else -> {
-                        InputInterface(
-                            currentPreset = uiState.currentPreset,
-                            inputText = uiState.inputText,
-                            onInputChanged = viewModel::updateInputText,
-                            onPresetChanged = viewModel::selectPreset,
-                            onGenerate = viewModel::generateText,
-                            presets = uiState.availablePresets
-                        )
+                                },
+                                onInsertText = {
+                                    if (mode == "floating" && AppAccessibilityService.isServiceEnabled()) {
+                                        val success = AppAccessibilityService.insertText(generated.version1)
+                                        if (success) {
+                                            Toast.makeText(context, "文本已插入", Toast.LENGTH_SHORT).show()
+                                            onClose()
+                                        } else {
+                                            copyToClipboard(context, generated.version1)
+                                            Toast.makeText(context, "插入失败，已复制到剪贴板", Toast.LENGTH_SHORT).show()
+                                        }
+                                    } else {
+                                        copyToClipboard(context, generated.version1)
+                                        Toast.makeText(context, "已复制到剪贴板", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
+                                onRegenerate = viewModel::regenerateText,
+                                onNewGeneration = viewModel::resetToInput
+                            )
+                        }
+                        else -> {
+                            InputCompactInterface(
+                                currentPreset = uiState.currentPreset,
+                                inputText = uiState.inputText,
+                                onInputChanged = viewModel::updateInputText,
+                                onPresetChanged = viewModel::selectPreset,
+                                onGenerate = viewModel::generateText,
+                                presets = uiState.availablePresets,
+                                error = uiState.error
+                            )
+                        }
                     }
                 }
             }
@@ -163,210 +186,103 @@ private fun LoadingState() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(32.dp),
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularProgressIndicator()
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "正在生成文本...",
-            style = MaterialTheme.typography.bodyMedium
-        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(text = "正在生成...", style = MaterialTheme.typography.bodyMedium)
     }
 }
 
 @Composable
-private fun InputInterface(
+private fun InputCompactInterface(
     currentPreset: String,
     inputText: String,
     onInputChanged: (String) -> Unit,
     onPresetChanged: (String) -> Unit,
     onGenerate: () -> Unit,
-    presets: List<com.aiwriter.assistant.data.model.WritingPreset>
+    presets: List<com.aiwriter.assistant.data.model.WritingPreset>,
+    error: String?
 ) {
-    Column {
-        // Preset selection
+    Column(modifier = Modifier.fillMaxWidth()) {
+        // Preset dropdown with better hit target
         var expanded by remember { mutableStateOf(false) }
-        
-        Box {
-            OutlinedTextField(
-                value = currentPreset,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("选择预设") },
-                trailingIcon = { 
-                    Icon(
-                        if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                        contentDescription = "展开"
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { expanded = !expanded }
-            )
-            
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                presets.forEach { preset ->
-                    DropdownMenuItem(
-                        text = { Text(preset.name) },
-                        onClick = {
-                            onPresetChanged(preset.name)
-                            expanded = false
-                        }
-                    )
-                }
+        OutlinedTextField(
+            value = currentPreset.ifBlank { "选择预设" },
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("预设") },
+            trailingIcon = {
+                Icon(
+                    if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = "展开"
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = !expanded }
+        )
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            presets.forEach { preset ->
+                DropdownMenuItem(text = { Text(preset.name) }, onClick = {
+                    onPresetChanged(preset.name)
+                    expanded = false
+                })
             }
         }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Input field
+
+        Spacer(modifier = Modifier.height(12.dp))
+
         OutlinedTextField(
             value = inputText,
             onValueChange = onInputChanged,
-            label = { Text("请输入主题...") },
-            placeholder = { Text("例如：防晒霜测评") },
+            label = { Text("主题") },
+            placeholder = { Text("如：防晒霜测评") },
             modifier = Modifier.fillMaxWidth(),
-            minLines = 3,
-            maxLines = 5
+            minLines = 2,
+            maxLines = 4
         )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Generate button
-        Button(
-            onClick = onGenerate,
-            enabled = inputText.isNotBlank(),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("生成文本")
+
+        if (!error.isNullOrBlank()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = error, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+        Button(onClick = onGenerate, enabled = inputText.isNotBlank(), modifier = Modifier.fillMaxWidth()) {
+            Text("生成")
         }
     }
 }
 
 @Composable
-private fun GeneratedTextDisplay(
-    generatedText: com.aiwriter.assistant.data.model.GeneratedText,
+private fun GeneratedCompactDisplay(
+    title: String,
+    text: String,
     mode: String,
-    onCopyText: (String) -> Unit,
-    onInsertText: (String) -> Unit,
+    onCopyText: () -> Unit,
+    onInsertText: () -> Unit,
     onRegenerate: () -> Unit,
     onNewGeneration: () -> Unit
 ) {
-    Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())
-    ) {
-        // Header with actions
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "生成结果",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            
-            Row {
-                IconButton(onClick = onRegenerate) {
-                    Icon(Icons.Default.Refresh, contentDescription = "重新生成")
-                }
-                IconButton(onClick = onNewGeneration) {
-                    Icon(Icons.Default.Add, contentDescription = "新建生成")
-                }
+    Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+        Text(text = title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
+        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+            Text(text = text, modifier = Modifier.padding(12.dp), style = MaterialTheme.typography.bodyMedium)
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = onCopyText, modifier = Modifier.weight(1f)) { Text("复制") }
+            if (mode == "floating") {
+                Button(onClick = onInsertText, modifier = Modifier.weight(1f)) { Text("插入") }
             }
         }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Generated text versions
-        TextVersionCard(
-            label = generatedText.style1Label,
-            text = generatedText.version1,
-            mode = mode,
-            onCopy = { onCopyText(generatedText.version1) },
-            onInsert = { onInsertText(generatedText.version1) }
-        )
-        
-        Spacer(modifier = Modifier.height(12.dp))
-        
-        TextVersionCard(
-            label = generatedText.style2Label,
-            text = generatedText.version2,
-            mode = mode,
-            onCopy = { onCopyText(generatedText.version2) },
-            onInsert = { onInsertText(generatedText.version2) }
-        )
-        
-        Spacer(modifier = Modifier.height(12.dp))
-        
-        TextVersionCard(
-            label = generatedText.style3Label,
-            text = generatedText.version3,
-            mode = mode,
-            onCopy = { onCopyText(generatedText.version3) },
-            onInsert = { onInsertText(generatedText.version3) }
-        )
-    }
-}
-
-@Composable
-private fun TextVersionCard(
-    label: String,
-    text: String,
-    mode: String,
-    onCopy: () -> Unit,
-    onInsert: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(12.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                
-                Row {
-                    IconButton(onClick = onCopy) {
-                        Icon(
-                            Icons.Default.ContentCopy,
-                            contentDescription = "复制",
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                    
-                    if (mode == "floating") {
-                        IconButton(onClick = onInsert) {
-                            Icon(
-                                Icons.Default.Input,
-                                contentDescription = "插入",
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                    }
-                }
-            }
-            
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyMedium
-            )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            TextButton(onClick = onRegenerate, modifier = Modifier.weight(1f)) { Text("重新生成") }
+            TextButton(onClick = onNewGeneration, modifier = Modifier.weight(1f)) { Text("新建") }
         }
     }
 }

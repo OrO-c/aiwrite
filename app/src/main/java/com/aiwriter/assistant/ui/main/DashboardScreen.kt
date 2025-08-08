@@ -21,6 +21,7 @@ import com.aiwriter.assistant.data.model.WorkMode
 import com.aiwriter.assistant.utils.PermissionHelper
 import java.text.SimpleDateFormat
 import java.util.*
+import android.app.Activity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,13 +45,6 @@ fun DashboardScreen(
                     }
                 }
             )
-        },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = viewModel::startNewGeneration,
-                icon = { Icon(Icons.Default.Edit, contentDescription = null) },
-                text = { Text("新建生成") }
-            )
         }
     ) { paddingValues ->
         LazyColumn(
@@ -65,7 +59,20 @@ fun DashboardScreen(
                 WorkModeStatusCard(
                     workMode = workMode,
                     missingPermissions = missingPermissions,
-                    onRequestPermissions = viewModel::requestPermissions,
+                    onRequestPermissions = {
+                        val activity = context as? Activity ?: return@WorkModeStatusCard
+                        when {
+                            missingPermissions.contains("悬浮窗权限") -> {
+                                PermissionHelper.requestOverlayPermission(activity)
+                            }
+                            missingPermissions.contains("无障碍服务") -> {
+                                PermissionHelper.requestAccessibilityPermission(activity)
+                            }
+                            missingPermissions.contains("通知权限") -> {
+                                PermissionHelper.requestNotificationPermission(activity)
+                            }
+                        }
+                    },
                     onChangeMode = { onNavigateToSettings() }
                 )
             }
@@ -267,7 +274,7 @@ private fun EmptyStateCard() {
             )
             
             Text(
-                text = "点击右下角的按钮开始你的第一次写作",
+                text = "可以通过磁贴或悬浮球快速开始",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -334,9 +341,9 @@ private fun RecentTextCard(
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            // Versions preview
+            // Preview
             Text(
-                text = "${text.style1Label} ${text.version1.take(50)}${if (text.version1.length > 50) "..." else ""}",
+                text = text.version1.take(80) + if (text.version1.length > 80) "..." else "",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,

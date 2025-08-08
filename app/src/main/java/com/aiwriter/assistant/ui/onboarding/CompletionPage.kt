@@ -34,7 +34,7 @@ fun CompletionPage(
         
         // Title
         Text(
-            text = "设置完成！",
+            text = "设置完成，立即提升输入效率！",
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -44,7 +44,7 @@ fun CompletionPage(
         
         // Description
         Text(
-            text = "现在您可以开始使用 AI 写作助手了",
+            text = "现在您可以一键将 AI 文本直接填入任意输入框",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -73,23 +73,23 @@ fun CompletionPage(
                 NextStepItem(
                     step = "1",
                     title = "申请必要权限",
-                    description = "根据您选择的工作模式申请相应权限"
+                    description = "根据所选模式启用悬浮窗/无障碍/通知权限"
                 )
                 
                 Spacer(modifier = Modifier.height(12.dp))
                 
                 NextStepItem(
                     step = "2",
-                    title = "启用功能入口",
-                    description = "磁贴将出现在通知栏，或悬浮球出现在屏幕边缘"
+                    title = "启用快捷入口",
+                    description = "磁贴在通知栏快速开启，或启用悬浮球以便直填"
                 )
                 
                 Spacer(modifier = Modifier.height(12.dp))
                 
                 NextStepItem(
                     step = "3",
-                    title = "开始写作",
-                    description = "输入主题，获取三种不同风格的文本"
+                    title = "开始高效输入",
+                    description = "唤起助手，直接把生成文本插入任何应用的输入框"
                 )
             }
         }

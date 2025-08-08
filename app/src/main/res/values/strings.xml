@@ -5,7 +5,7 @@
     
     <!-- Onboarding -->
     <string name="welcome_title">AI 写作助手</string>
-    <string name="welcome_subtitle">输入一次，获取 3 种不同风格的文本</string>
+    <string name="welcome_subtitle">专注高效输入：一键把 AI 文本直接填入任何输入框</string>
     
     <!-- Navigation -->
     <string name="nav_dashboard">仪表盘</string>

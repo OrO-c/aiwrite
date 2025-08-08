@@ -1,19 +1,16 @@
 package com.aiwriter.assistant.service
 
-import android.accessibilityservice.AccessibilityService
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.os.Bundle
-import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.os.bundleOf
 
-class AccessibilityService : AccessibilityService() {
+class AppAccessibilityService : android.accessibilityservice.AccessibilityService() {
     companion object {
-        private var instance: AccessibilityService? = null
+        private var instance: AppAccessibilityService? = null
 
-        fun getInstance(): AccessibilityService? = instance
+        fun getInstance(): AppAccessibilityService? = instance
 
         fun isServiceEnabled(): Boolean = instance != null
 
@@ -39,7 +36,7 @@ class AccessibilityService : AccessibilityService() {
         instance = null
     }
 
-    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+    override fun onAccessibilityEvent(event: android.view.accessibility.AccessibilityEvent?) {
         // 不处理事件，服务只用于文本插入
     }
 

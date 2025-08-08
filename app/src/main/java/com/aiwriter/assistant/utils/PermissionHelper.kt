@@ -59,7 +59,7 @@ object PermissionHelper {
                 context.contentResolver,
                 Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
             )
-            val serviceName = "${context.packageName}/.service.AccessibilityService"
+            val serviceName = "${context.packageName}/.service.AppAccessibilityService"
             return services?.contains(serviceName) == true
         }
         

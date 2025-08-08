@@ -74,7 +74,7 @@
 
         <!-- 无障碍服务 -->
         <service
-            android:name=".service.AccessibilityService"
+            android:name=".service.AppAccessibilityService"
             android:exported="false"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>

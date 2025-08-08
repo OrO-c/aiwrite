@@ -51,7 +51,7 @@ fun WelcomePage(
         
         // Subtitle
         Text(
-            text = "输入一次，获取 3 种不同风格的文本",
+            text = "专注高效输入：一键把 AI 文本直接填入任何输入框",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -62,24 +62,24 @@ fun WelcomePage(
         // Features
         FeatureItem(
             icon = Icons.Default.AutoAwesome,
-            title = "智能分段写作",
-            description = "创意版、详细版、简洁版 - 一次生成三种风格"
+            title = "一键直填",
+            description = "在聊天、浏览器、办公应用的输入框中直接插入生成内容"
         )
         
         Spacer(modifier = Modifier.height(24.dp))
         
         FeatureItem(
             icon = Icons.Default.Speed,
-            title = "快速输入",
-            description = "一键复制或直接输入到任何应用"
+            title = "跨应用快捷",
+            description = "磁贴/悬浮球快速唤起，无需来回切换复制粘贴"
         )
         
         Spacer(modifier = Modifier.height(24.dp))
         
         FeatureItem(
             icon = Icons.Default.Edit,
-            title = "多场景适配",
-            description = "小红书文案、邮件模板、产品评价等预设"
+            title = "更少步骤更高效",
+            description = "减少复制、切换、粘贴的重复操作，显著提升输入效率"
         )
         
         Spacer(modifier = Modifier.height(48.dp))
@@ -115,12 +115,12 @@ fun WelcomePage(
                             style = MaterialTheme.typography.headlineMedium
                         )
                         Text(
-                            text = "磁贴+剪贴板",
+                            text = "磁贴快捷入口",
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium
                         )
                         Text(
-                            text = "省电模式",
+                            text = "通知栏一键唤起",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -135,12 +135,12 @@ fun WelcomePage(
                             style = MaterialTheme.typography.headlineMedium
                         )
                         Text(
-                            text = "悬浮球+直接输入",
+                            text = "悬浮球直填",
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium
                         )
                         Text(
-                            text = "高效模式",
+                            text = "任意输入框一键插入",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
