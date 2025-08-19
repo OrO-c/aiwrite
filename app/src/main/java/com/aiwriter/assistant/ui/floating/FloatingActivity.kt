@@ -171,7 +171,8 @@ fun FloatingWritingInterface(
                                 onPresetChanged = viewModel::selectPreset,
                                 onGenerate = viewModel::generateText,
                                 presets = uiState.availablePresets,
-                                error = uiState.error
+                                error = uiState.error,
+                                onTestApi = viewModel::testApiConnection
                             )
                         }
                     }
@@ -203,32 +204,52 @@ private fun InputCompactInterface(
     onPresetChanged: (String) -> Unit,
     onGenerate: () -> Unit,
     presets: List<com.aiwriter.assistant.data.model.WritingPreset>,
-    error: String?
+    error: String?,
+    onTestApi: () -> Unit = {}
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         // Preset dropdown with better hit target
         var expanded by remember { mutableStateOf(false) }
-        OutlinedTextField(
-            value = currentPreset.ifBlank { "选择预设" },
-            onValueChange = {},
-            readOnly = true,
-            label = { Text("预设") },
-            trailingIcon = {
-                Icon(
-                    if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = "展开"
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = !expanded }
-        )
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            presets.forEach { preset ->
-                DropdownMenuItem(text = { Text(preset.name) }, onClick = {
-                    onPresetChanged(preset.name)
+        val dropdownExpanded = remember { mutableStateOf(false) }
+        
+        Box {
+            OutlinedTextField(
+                value = currentPreset.ifBlank { "选择预设" },
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("预设") },
+                trailingIcon = {
+                    Icon(
+                        if (dropdownExpanded.value) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = "展开"
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { 
+                        dropdownExpanded.value = !dropdownExpanded.value
+                        expanded = dropdownExpanded.value
+                    }
+            )
+            
+            DropdownMenu(
+                expanded = dropdownExpanded.value, 
+                onDismissRequest = { 
+                    dropdownExpanded.value = false
                     expanded = false
-                })
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                presets.forEach { preset ->
+                    DropdownMenuItem(
+                        text = { Text(preset.name) }, 
+                        onClick = {
+                            onPresetChanged(preset.name)
+                            dropdownExpanded.value = false
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
 
@@ -250,8 +271,22 @@ private fun InputCompactInterface(
         }
 
         Spacer(modifier = Modifier.height(12.dp))
-        Button(onClick = onGenerate, enabled = inputText.isNotBlank(), modifier = Modifier.fillMaxWidth()) {
-            Text("生成")
+        
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(
+                onClick = onGenerate, 
+                enabled = inputText.isNotBlank(), 
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("生成")
+            }
+            
+            TextButton(
+                onClick = onTestApi,
+                modifier = Modifier.weight(0.5f)
+            ) {
+                Text("测试API")
+            }
         }
     }
 }

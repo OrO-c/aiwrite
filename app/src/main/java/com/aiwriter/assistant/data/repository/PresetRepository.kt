@@ -31,9 +31,24 @@ class PresetRepository(private val presetDao: WritingPresetDao) {
     }
     
     suspend fun initializeDefaultPresets() {
-        val defaultPresets = getDefaultPresetList()
-        defaultPresets.forEach { preset ->
-            insertPreset(preset)
+        android.util.Log.d("PresetRepository", "initializeDefaultPresets called")
+        try {
+            val defaultPresets = getDefaultPresetList()
+            android.util.Log.d("PresetRepository", "Default presets count: ${defaultPresets.size}")
+            
+            defaultPresets.forEach { preset ->
+                try {
+                    insertPreset(preset)
+                    android.util.Log.d("PresetRepository", "Inserted preset: ${preset.name}")
+                } catch (e: Exception) {
+                    android.util.Log.e("PresetRepository", "Failed to insert preset: ${preset.name}", e)
+                    throw e
+                }
+            }
+            android.util.Log.d("PresetRepository", "All default presets initialized successfully")
+        } catch (e: Exception) {
+            android.util.Log.e("PresetRepository", "Failed to initialize default presets", e)
+            throw e
         }
     }
     
