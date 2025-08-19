@@ -45,6 +45,10 @@ class AITextRepository {
         systemPrompt: String,
         apiConfig: ApiConfig
     ): Result<Triple<String, String, String>> {
+        android.util.Log.d("AITextRepository", "generateWithOpenAIFormat called")
+        android.util.Log.d("AITextRepository", "Input: $input")
+        android.util.Log.d("AITextRepository", "API Config: ${apiConfig.provider}, ${apiConfig.endpoint}")
+        
         val fullPrompt = """
             $systemPrompt
             
@@ -78,6 +82,8 @@ class AITextRepository {
             max_tokens = apiConfig.maxTokens
         )
         
+        android.util.Log.d("AITextRepository", "Making API request...")
+        
         return try {
             val response = withTimeout(15_000L) {
                 openAIService.generateText(
@@ -87,8 +93,12 @@ class AITextRepository {
                 )
             }
             
+            android.util.Log.d("AITextRepository", "API response received")
+            
             val content = response.choices.firstOrNull()?.message?.content
                 ?: return Result.failure(Exception("没有收到AI响应"))
+            
+            android.util.Log.d("AITextRepository", "Content length: ${content.length}")
             
             val versions = content.split("/FGX/").map { it.trim() }
             val v1 = versions.getOrNull(0) ?: ""
@@ -99,11 +109,30 @@ class AITextRepository {
                 return Result.failure(Exception("AI响应内容为空"))
             }
             
+            android.util.Log.d("AITextRepository", "Generation successful")
             Result.success(Triple(v1, v2, v3))
         } catch (e: TimeoutCancellationException) {
+            android.util.Log.e("AITextRepository", "Request timeout", e)
             Result.failure(Exception("请求超时，请稍后重试"))
+        } catch (e: retrofit2.HttpException) {
+            android.util.Log.e("AITextRepository", "HTTP error: ${e.code()}", e)
+            val errorMessage = when (e.code()) {
+                401 -> "API密钥无效，请检查配置"
+                403 -> "API密钥权限不足"
+                429 -> "请求过于频繁，请稍后重试"
+                500 -> "服务器内部错误"
+                else -> "网络请求失败 (${e.code()})"
+            }
+            Result.failure(Exception(errorMessage))
+        } catch (e: java.net.UnknownHostException) {
+            android.util.Log.e("AITextRepository", "Network error", e)
+            Result.failure(Exception("网络连接失败，请检查网络设置"))
+        } catch (e: java.net.SocketTimeoutException) {
+            android.util.Log.e("AITextRepository", "Socket timeout", e)
+            Result.failure(Exception("连接超时，请检查网络"))
         } catch (e: Exception) {
-            Result.failure(e)
+            android.util.Log.e("AITextRepository", "Unexpected error", e)
+            Result.failure(Exception("生成失败: ${e.message}"))
         }
     }
     

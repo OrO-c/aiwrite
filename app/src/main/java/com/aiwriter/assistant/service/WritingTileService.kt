@@ -58,7 +58,29 @@ class WritingTileService : TileService() {
         try {
             startActivity(intent)
         } catch (e: Exception) {
-            // Handle error - maybe show a toast or notification
+            // Show error notification
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as android.app.NotificationManager
+            val channelId = "tile_error"
+            
+            // Create notification channel for Android 8.0+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                val channel = android.app.NotificationChannel(
+                    channelId,
+                    "磁贴错误",
+                    android.app.NotificationManager.IMPORTANCE_LOW
+                )
+                notificationManager.createNotificationChannel(channel)
+            }
+            
+            val notification = android.app.NotificationCompat.Builder(this, channelId)
+                .setContentTitle("AI写作助手")
+                .setContentText("启动失败，请检查应用设置")
+                .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                .setPriority(android.app.NotificationCompat.PRIORITY_LOW)
+                .setAutoCancel(true)
+                .build()
+            
+            notificationManager.notify(1001, notification)
         }
     }
 }
