@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -25,7 +26,7 @@ import android.app.Activity
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.activity.ComponentActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,15 +41,16 @@ fun DashboardScreen(
     val missingPermissions by viewModel.missingPermissions.collectAsState()
     
     // Refresh status from preferences when dashboard becomes visible
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
+    val currentView = LocalView.current
+    DisposableEffect(currentView) {
+        val lifecycle = (currentView.context as? ComponentActivity)?.lifecycle
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 viewModel.refreshStatus()
             }
         }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+        lifecycle?.addObserver(observer)
+        onDispose { lifecycle?.removeObserver(observer) }
     }
     
     Scaffold(
