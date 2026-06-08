@@ -7,7 +7,9 @@ import com.aiwriter.assistant.data.model.ApiConfig
 import com.aiwriter.assistant.data.model.ApiProvider
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -192,7 +194,9 @@ class AITextRepository {
                 .build()
 
             val content = withTimeout(120_000L) {
-                val httpResponse = okHttpClient.newCall(request).execute()
+                val httpResponse = withContext(Dispatchers.IO) {
+                    okHttpClient.newCall(request).execute()
+                }
                 httpResponse.use { resp ->
                     if (!resp.isSuccessful) {
                         val errorBody = resp.body?.string() ?: "Unknown error"
@@ -211,7 +215,7 @@ class AITextRepository {
                 ?.firstOrNull()
                 ?.text
                 ?: return Result.failure(Exception("没有收到AI响应"))
-            val versions = content.split("/FGX/").map { it.trim() }
+            val versions = geminiContent.split("/FGX/").map { it.trim() }
             val v1 = versions.getOrNull(0) ?: ""
             val v2 = versions.getOrNull(1) ?: ""
             val v3 = versions.getOrNull(2) ?: ""
@@ -250,7 +254,9 @@ class AITextRepository {
                     .build()
 
                 val response = withTimeout(30_000L) {
-                    okHttpClient.newCall(request).execute()
+                    withContext(Dispatchers.IO) {
+                        okHttpClient.newCall(request).execute()
+                    }
                 }
 
                 response.use {

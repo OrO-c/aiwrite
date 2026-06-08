@@ -156,6 +156,7 @@ fun FloatingWritingInterface(
                                     val textToInsert = currentText.ifBlank { generated.version1 }
                                     if (mode == "floating" && AppAccessibilityService.isServiceEnabled()) {
                                         val success = AppAccessibilityService.insertText(textToInsert)
+                                        if (success) {
                                             Toast.makeText(context, "文本已插入", Toast.LENGTH_SHORT).show()
                                             onClose()
                                         } else {
