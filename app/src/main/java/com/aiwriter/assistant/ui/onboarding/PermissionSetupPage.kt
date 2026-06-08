@@ -30,10 +30,6 @@ fun PermissionSetupPage(
     val activity = context as? Activity
     val selectedMode by viewModel.selectedWorkMode
 
-    // trigger recomposition on resume to refresh permission states
-    var resumeTick by remember { mutableStateOf(0) }
-    LaunchedEffect(Unit) {}
-
     // Live permission states (re-evaluated on each composition)
     val hasOverlay = PermissionHelper.hasOverlayPermission(context)
     val hasAccessibility = PermissionHelper.isAccessibilityServiceEnabled(context)

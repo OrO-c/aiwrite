@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aiwriter.assistant.AIWriterApplication
 import com.aiwriter.assistant.data.model.WorkMode
 import com.aiwriter.assistant.ui.main.MainActivity
 import com.aiwriter.assistant.ui.theme.AIWritingAssistantTheme
