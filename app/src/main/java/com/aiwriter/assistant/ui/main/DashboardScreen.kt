@@ -22,6 +22,7 @@ import com.aiwriter.assistant.utils.PermissionHelper
 import java.text.SimpleDateFormat
 import java.util.*
 import android.app.Activity
+import androidx.compose.runtime.LaunchedEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,6 +35,9 @@ fun DashboardScreen(
     val recentTexts by viewModel.recentTexts.collectAsState()
     val workMode by viewModel.workMode.collectAsState()
     val missingPermissions by viewModel.missingPermissions.collectAsState()
+    
+    // Refresh status from preferences when dashboard becomes visible
+    LaunchedEffect(Unit) { viewModel.refreshStatus() }
     
     Scaffold(
         topBar = {

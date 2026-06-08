@@ -64,7 +64,8 @@ fun SettingsScreen(
                             putExtra("startAt", "permissions")
                         }
                         context.startActivity(intent)
-                    }
+                    },
+                    onRefreshDashboard = { /* DashboardViewModel will re-read on next visit */ }
                 )
             }
             

@@ -11,9 +11,6 @@ import com.aiwriter.assistant.utils.PermissionHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class DashboardViewModel : ViewModel() {
@@ -31,18 +28,18 @@ class DashboardViewModel : ViewModel() {
             initialValue = emptyList()
         )
     
-    val workMode = flow {
-        emit(preferences.workMode)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = WorkMode.TILE_CLIPBOARD
-    )
+    private val _workMode = MutableStateFlow(preferences.workMode)
+    val workMode: StateFlow<WorkMode> = _workMode.asStateFlow()
     
     private val _missingPermissions = MutableStateFlow<List<String>>(emptyList())
     val missingPermissions = _missingPermissions.asStateFlow()
     
     init {
+        updatePermissionStatus()
+    }
+    
+    fun refreshStatus() {
+        _workMode.value = preferences.workMode
         updatePermissionStatus()
     }
     

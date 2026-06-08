@@ -46,10 +46,16 @@ class AppAccessibilityService : android.accessibilityservice.AccessibilityServic
 
     fun insertTextInternal(text: String): Boolean {
         return try {
-            val focusedNode = findFocusedEditableNode(rootInActiveWindow)
-            if (focusedNode != null) {
-                insertTextToNode(focusedNode, text)
-                return true
+            val root = rootInActiveWindow ?: return false
+            try {
+                val focusedNode = findFocusedEditableNode(root)
+                if (focusedNode != null) {
+                    val success = insertTextToNode(focusedNode, text)
+                    focusedNode.recycle()
+                    return success
+                }
+            } finally {
+                root.recycle()
             }
             copyToClipboard(this, text)
             true
@@ -58,18 +64,15 @@ class AppAccessibilityService : android.accessibilityservice.AccessibilityServic
         }
     }
 
-    private fun findFocusedEditableNode(root: AccessibilityNodeInfo?): AccessibilityNodeInfo? {
-        root ?: return null
+    private fun findFocusedEditableNode(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
         if (root.isFocused && root.isEditable) return root
         for (i in 0 until root.childCount) {
-            val child = root.getChild(i)
-            child?.let {
-                val found = findFocusedEditableNode(it)
-                if (found != null) {
-                    it.recycle()
-                    return found
-                }
-                it.recycle()
+            val child = root.getChild(i) ?: continue
+            try {
+                val found = findFocusedEditableNode(child)
+                if (found != null) return found
+            } finally {
+                child.recycle()
             }
         }
         return null

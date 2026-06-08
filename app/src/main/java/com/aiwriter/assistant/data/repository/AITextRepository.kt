@@ -191,27 +191,26 @@ class AITextRepository {
                 .addHeader("X-Goog-Api-Key", apiConfig.apiKey)
                 .build()
 
-            val response = withTimeout(120_000L) {
-                okHttpClient.newCall(request).execute()
+            val content = withTimeout(120_000L) {
+                val httpResponse = okHttpClient.newCall(request).execute()
+                httpResponse.use { resp ->
+                    if (!resp.isSuccessful) {
+                        val errorBody = resp.body?.string() ?: "Unknown error"
+                        throw Exception("Gemini API error (${resp.code}): $errorBody")
+                    }
+                    resp.body?.string()
+                        ?: throw Exception("Empty response from Gemini")
+                }
             }
 
-            response.use {
-                if (!it.isSuccessful) {
-                    val errorBody = it.body?.string() ?: "Unknown error"
-                    return Result.failure(Exception("Gemini API error (${it.code}): $errorBody"))
-                }
-
-                val responseBody = it.body?.string() ?: return Result.failure(Exception("Empty response from Gemini"))
-            val geminiResponse = gson.fromJson(responseBody, GeminiResponse::class.java)
-
-            val content = geminiResponse.candidates
+            val geminiResponse = gson.fromJson(content, GeminiResponse::class.java)
+            val geminiContent = geminiResponse.candidates
                 ?.firstOrNull()
                 ?.content
                 ?.parts
                 ?.firstOrNull()
                 ?.text
                 ?: return Result.failure(Exception("没有收到AI响应"))
-
             val versions = content.split("/FGX/").map { it.trim() }
             val v1 = versions.getOrNull(0) ?: ""
             val v2 = versions.getOrNull(1) ?: ""
