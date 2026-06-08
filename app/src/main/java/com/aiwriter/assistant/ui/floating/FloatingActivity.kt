@@ -48,6 +48,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -135,18 +136,26 @@ fun FloatingWritingInterface(
                         uiState.isLoading -> LoadingState()
                         uiState.generatedText != null -> {
                             val generated = uiState.generatedText!!
+                            val versionIndex = uiState.selectedVersionIndex
+                            val currentText = when (versionIndex) {
+                                0 -> generated.version1
+                                1 -> generated.version2
+                                2 -> generated.version3
+                                else -> generated.version1
+                            }.ifBlank { "(无内容)" }
                             GeneratedCompactDisplay(
                                 title = generated.input,
-                                text = generated.version1.ifBlank { "(无内容)" },
+                                text = currentText,
                                 mode = mode,
                                 onCopyText = {
-                                    copyToClipboard(context, generated.version1)
+                                    val textToCopy = currentText.ifBlank { generated.version1 }
+                                    copyToClipboard(context, textToCopy)
                                     Toast.makeText(context, "已复制到剪贴板", Toast.LENGTH_SHORT).show()
                                 },
                                 onInsertText = {
+                                    val textToInsert = currentText.ifBlank { generated.version1 }
                                     if (mode == "floating" && AppAccessibilityService.isServiceEnabled()) {
-                                        val success = AppAccessibilityService.insertText(generated.version1)
-                                        if (success) {
+                                        val success = AppAccessibilityService.insertText(textToInsert)
                                             Toast.makeText(context, "文本已插入", Toast.LENGTH_SHORT).show()
                                             onClose()
                                         } else {
@@ -159,7 +168,9 @@ fun FloatingWritingInterface(
                                     }
                                 },
                                 onRegenerate = viewModel::regenerateText,
-                                onNewGeneration = viewModel::resetToInput
+                                onNewGeneration = viewModel::resetToInput,
+                                selectedVersionIndex = versionIndex,
+                                onSelectVersion = viewModel::selectVersion
                             )
                         }
                         else -> {
@@ -275,10 +286,26 @@ private fun GeneratedCompactDisplay(
     onCopyText: () -> Unit,
     onInsertText: () -> Unit,
     onRegenerate: () -> Unit,
-    onNewGeneration: () -> Unit
+    onNewGeneration: () -> Unit,
+    selectedVersionIndex: Int = 0,
+    onSelectVersion: (Int) -> Unit = {}
 ) {
     Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
         Text(text = title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
+        // Version tabs
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            listOf("版本1", "版本2", "版本3").forEachIndexed { index, label ->
+                FilterChip(
+                    selected = selectedVersionIndex == index,
+                    onClick = { onSelectVersion(index) },
+                    label = { Text(label) }
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(8.dp))
         Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
             Text(text = text, modifier = Modifier.padding(12.dp), style = MaterialTheme.typography.bodyMedium)

@@ -62,6 +62,7 @@ fun SettingsScreen(
                         // After switching mode, guide user to permissions setup
                         val intent = Intent(context, OnboardingActivity::class.java).apply {
                             putExtra("startAt", "permissions")
+                            putExtra("workMode", mode.name)
                         }
                         context.startActivity(intent)
                     }
@@ -92,8 +93,7 @@ fun SettingsScreen(
             // Data Management Section
             SettingsSection(title = "数据管理") {
                 DataManagementSection(
-                    onClearHistory = viewModel::clearHistory,
-                    onResetApp = viewModel::resetApp
+                    onClearHistory = viewModel::clearHistory
                 )
             }
         }
@@ -259,15 +259,24 @@ private fun ApiConfigurationSection(
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth()
                         )
-                        OutlinedTextField(
-                            value = customModel,
-                            onValueChange = { customModel = it },
-                            label = { Text("模型名称") },
-                            placeholder = { Text("如: gpt-3.5-turbo") },
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth()
-                        )
                     }
+                    OutlinedTextField(
+                        value = customModel,
+                        onValueChange = { customModel = it },
+                        label = { Text("模型名称") },
+                        placeholder = {
+                            Text(
+                                when (currentProvider) {
+                                    ApiProvider.OPENAI -> "gpt-3.5-turbo"
+                                    ApiProvider.DEEPSEEK -> "deepseek-chat"
+                                    ApiProvider.GEMINI -> "gemini-pro"
+                                    ApiProvider.CUSTOM -> "如: gpt-3.5-turbo"
+                                }
+                            )
+                        },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             },
             confirmButton = {
@@ -341,11 +350,9 @@ private fun AppSettingsSection(
 
 @Composable
 private fun DataManagementSection(
-    onClearHistory: () -> Unit,
-    onResetApp: () -> Unit
+    onClearHistory: () -> Unit
 ) {
     var showClearDialog by remember { mutableStateOf(false) }
-    var showResetDialog by remember { mutableStateOf(false) }
     
     Column {
         OutlinedButton(
@@ -353,18 +360,6 @@ private fun DataManagementSection(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("清除历史记录")
-        }
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        OutlinedButton(
-            onClick = { showResetDialog = true },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = MaterialTheme.colorScheme.error
-            )
-        ) {
-            Text("重置应用")
         }
     }
     
@@ -385,32 +380,6 @@ private fun DataManagementSection(
             },
             dismissButton = {
                 TextButton(onClick = { showClearDialog = false }) {
-                    Text("取消")
-                }
-            }
-        )
-    }
-    
-    if (showResetDialog) {
-        AlertDialog(
-            onDismissRequest = { showResetDialog = false },
-            title = { Text("确认重置") },
-            text = { Text("这将删除所有数据并重置应用到初始状态，此操作无法撤销。") },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        onResetApp()
-                        showResetDialog = false
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Text("确认重置")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showResetDialog = false }) {
                     Text("取消")
                 }
             }

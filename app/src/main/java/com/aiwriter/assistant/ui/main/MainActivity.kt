@@ -30,8 +30,9 @@ class MainActivity : ComponentActivity() {
             return
         }
         
+        val isDarkMode = preferences.isDarkMode
         setContent {
-            AIWritingAssistantTheme {
+            AIWritingAssistantTheme(darkTheme = isDarkMode) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

@@ -37,7 +37,16 @@ fun DashboardScreen(
     val missingPermissions by viewModel.missingPermissions.collectAsState()
     
     // Refresh status from preferences when dashboard becomes visible
-    LaunchedEffect(Unit) { viewModel.refreshStatus() }
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshStatus()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
     
     Scaffold(
         topBar = {

@@ -19,6 +19,7 @@ data class FloatingUiState(
     val currentPreset: String = "",
     val availablePresets: List<WritingPreset> = emptyList(),
     val generatedText: GeneratedText? = null,
+    val selectedVersionIndex: Int = 0,
     val error: String? = null
 )
 
@@ -153,10 +154,15 @@ class FloatingViewModel : ViewModel() {
         generateText()
     }
     
+    fun selectVersion(index: Int) {
+        _uiState.value = _uiState.value.copy(selectedVersionIndex = index)
+    }
+
     fun resetToInput() {
         _uiState.value = _uiState.value.copy(
             generatedText = null,
             inputText = "",
+            selectedVersionIndex = 0,
             error = null
         )
     }

@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aiwriter.assistant.data.model.WorkMode
 import com.aiwriter.assistant.ui.main.MainActivity
 import com.aiwriter.assistant.ui.theme.AIWritingAssistantTheme
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,15 +48,18 @@ class OnboardingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
+        val isDarkMode = AIWriterApplication.instance.preferences.isDarkMode
         setContent {
-            AIWritingAssistantTheme {
+            AIWritingAssistantTheme(darkTheme = isDarkMode) {
                 val startAt = intent.getStringExtra("startAt")
+                val workMode = intent.getStringExtra("workMode")
                 OnboardingScreen(
                     onComplete = {
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
                     },
-                    startAt = startAt
+                    startAt = startAt,
+                    workMode = workMode
                 )
             }
         }
@@ -67,12 +71,22 @@ class OnboardingActivity : ComponentActivity() {
 fun OnboardingScreen(
     onComplete: () -> Unit,
     startAt: String? = null,
+    workMode: String? = null,
     viewModel: OnboardingViewModel = viewModel()
 ) {
     val pageCount = 5
     val pagerState = rememberPagerState(pageCount = { pageCount })
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    // Sync work mode from intent
+    LaunchedEffect(workMode) {
+        workMode?.let {
+            try {
+                viewModel.selectWorkMode(WorkMode.valueOf(it))
+            } catch (_: Exception) {}
+        }
+    }
 
     // Jump to specific page if requested
     LaunchedEffect(startAt) {
