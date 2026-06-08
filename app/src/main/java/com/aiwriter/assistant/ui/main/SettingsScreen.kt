@@ -12,6 +12,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.activity.compose.BackHandler
@@ -165,6 +167,8 @@ private fun ApiConfigurationSection(
     onConfigChanged: (com.aiwriter.assistant.data.model.ApiConfig) -> Unit,
     onTestConnection: (com.aiwriter.assistant.data.model.ApiConfig) -> Unit
 ) {
+    var showConfigDialog by remember { mutableStateOf(false) }
+
     Column {
         Text(
             text = "当前提供商",
@@ -210,11 +214,86 @@ private fun ApiConfigurationSection(
         Spacer(modifier = Modifier.height(16.dp))
         
         Button(
-            onClick = { /* Open API config dialog */ },
+            onClick = { showConfigDialog = true },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("配置 ${currentProvider.displayName}")
         }
+    }
+
+    if (showConfigDialog) {
+        val existingConfig = apiConfigs[currentProvider]
+        var apiKey by remember(existingConfig) { mutableStateOf(existingConfig?.apiKey ?: "") }
+        var endpoint by remember(existingConfig) { mutableStateOf(existingConfig?.endpoint ?: currentProvider.defaultEndpoint) }
+        var customModel by remember(existingConfig) { mutableStateOf(existingConfig?.customModel ?: "") }
+        var showApiKey by remember { mutableStateOf(false) }
+
+        AlertDialog(
+            onDismissRequest = { showConfigDialog = false },
+            title = { Text("配置 ${currentProvider.displayName}") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedTextField(
+                        value = apiKey,
+                        onValueChange = { apiKey = it },
+                        label = { Text("API 密钥") },
+                        singleLine = true,
+                        visualTransformation = if (showApiKey) VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = {
+                            IconButton(onClick = { showApiKey = !showApiKey }) {
+                                Icon(
+                                    if (showApiKey) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                    contentDescription = null
+                                )
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    if (currentProvider == ApiProvider.CUSTOM) {
+                        OutlinedTextField(
+                            value = endpoint,
+                            onValueChange = { endpoint = it },
+                            label = { Text("API 端点") },
+                            placeholder = { Text("https://api.example.com/v1/chat/completions") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        OutlinedTextField(
+                            value = customModel,
+                            onValueChange = { customModel = it },
+                            label = { Text("模型名称") },
+                            placeholder = { Text("如: gpt-3.5-turbo") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val config = existingConfig?.copy(
+                            apiKey = apiKey,
+                            endpoint = endpoint,
+                            customModel = customModel
+                        ) ?: com.aiwriter.assistant.data.model.ApiConfig(
+                            provider = currentProvider,
+                            apiKey = apiKey,
+                            endpoint = endpoint,
+                            customModel = customModel
+                        )
+                        onConfigChanged(config)
+                        showConfigDialog = false
+                    },
+                    enabled = apiKey.isNotBlank() &&
+                            (currentProvider != ApiProvider.CUSTOM || endpoint.isNotBlank())
+                ) { Text("保存") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showConfigDialog = false }) { Text("取消") }
+            }
+        )
     }
 }
 

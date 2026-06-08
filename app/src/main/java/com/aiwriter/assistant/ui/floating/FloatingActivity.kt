@@ -13,7 +13,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,8 +43,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.ExposedDropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -195,6 +196,7 @@ private fun LoadingState() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun InputCompactInterface(
     currentPreset: String,
@@ -206,29 +208,35 @@ private fun InputCompactInterface(
     error: String?
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        // Preset dropdown with better hit target
+        // Preset dropdown using ExposedDropdownMenuBox
         var expanded by remember { mutableStateOf(false) }
-        OutlinedTextField(
-            value = currentPreset.ifBlank { "选择预设" },
-            onValueChange = {},
-            readOnly = true,
-            label = { Text("预设") },
-            trailingIcon = {
-                Icon(
-                    if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = "展开"
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = !expanded }
-        )
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            presets.forEach { preset ->
-                DropdownMenuItem(text = { Text(preset.name) }, onClick = {
-                    onPresetChanged(preset.name)
-                    expanded = false
-                })
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
+        ) {
+            OutlinedTextField(
+                value = currentPreset.ifBlank { "选择预设" },
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("预设") },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor(),
+                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                presets.forEach { preset ->
+                    DropdownMenuItem(text = { Text(preset.name) }, onClick = {
+                        onPresetChanged(preset.name)
+                        expanded = false
+                    })
+                }
             }
         }
 

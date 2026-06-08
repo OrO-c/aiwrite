@@ -141,8 +141,10 @@ fun ApiConfigurationPage(
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        // Custom endpoint (if custom provider selected)
+        // Custom endpoint & model (if custom provider selected)
         if (selectedProvider == ApiProvider.CUSTOM) {
+            val customModel by viewModel.customModelName
+
             OutlinedTextField(
                 value = customEndpoint,
                 onValueChange = viewModel::updateCustomEndpoint,
@@ -154,7 +156,18 @@ fun ApiConfigurationPage(
                     keyboardType = KeyboardType.Uri
                 )
             )
-            
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = customModel,
+                onValueChange = viewModel::updateCustomModelName,
+                label = { Text("模型名称") },
+                placeholder = { Text("如: gpt-3.5-turbo") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
         }
         

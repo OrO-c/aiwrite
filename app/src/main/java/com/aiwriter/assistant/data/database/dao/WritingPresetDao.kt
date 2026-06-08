@@ -28,6 +28,9 @@ interface WritingPresetDao {
     @Query("DELETE FROM writing_presets WHERE id = :id")
     suspend fun deletePresetById(id: String)
     
+    @Query("SELECT COUNT(*) FROM writing_presets")
+    suspend fun getPresetCount(): Int
+
     @Query("UPDATE writing_presets SET isDefault = 0")
     suspend fun clearDefaultFlags()
 }

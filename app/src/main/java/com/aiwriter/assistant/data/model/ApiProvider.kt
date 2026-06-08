@@ -19,5 +19,6 @@ data class ApiConfig(
     },
     val temperature: Float = 0.7f,
     val maxTokens: Int = 2000,
-    val streamResponse: Boolean = false
+    val streamResponse: Boolean = false,
+    val customModel: String = ""
 )
