@@ -36,15 +36,15 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Input
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
+
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -205,35 +205,42 @@ private fun InputCompactInterface(
     error: String?
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        // Preset dropdown using Box + DropdownMenu (stable API)
-        var expanded by remember { mutableStateOf(false) }
-        Box {
-            OutlinedTextField(
-                value = currentPreset.ifBlank { "选择预设" },
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("预设") },
-                trailingIcon = {
-                    Icon(
-                        if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                        contentDescription = "展开"
-                    )
+        // Preset selector using Button + AlertDialog (guaranteed stable API)
+        var showPresetDialog by remember { mutableStateOf(false) }
+        OutlinedButton(
+            onClick = { showPresetDialog = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = currentPreset.ifBlank { "选择预设" })
+        }
+        if (showPresetDialog) {
+            AlertDialog(
+                onDismissRequest = { showPresetDialog = false },
+                title = { Text("选择预设") },
+                text = {
+                    Column {
+                        presets.forEach { preset ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        onPresetChanged(preset.name)
+                                        showPresetDialog = false
+                                    }
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(preset.name)
+                            }
+                        }
+                    }
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { expanded = !expanded }
-            )
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                presets.forEach { preset ->
-                    DropdownMenuItem(text = { Text(preset.name) }, onClick = {
-                        onPresetChanged(preset.name)
-                        expanded = false
-                    })
+                confirmButton = {
+                    TextButton(onClick = { showPresetDialog = false }) {
+                        Text("取消")
+                    }
                 }
-            }
+            )
         }
 
         Spacer(modifier = Modifier.height(12.dp))
