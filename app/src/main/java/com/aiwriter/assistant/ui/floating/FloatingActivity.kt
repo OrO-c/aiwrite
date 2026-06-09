@@ -3,10 +3,7 @@ package com.aiwriter.assistant.ui.floating
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -71,17 +68,6 @@ import com.aiwriter.assistant.ui.theme.AIWritingAssistantTheme
 class FloatingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Close notification bar
-        sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
-
-        // Prevent touchthrough on transparent areas
-        window?.apply {
-            setFlags(
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-            )
-        }
 
         val mode = intent.getStringExtra("mode") ?: "floating"
         setContent {
