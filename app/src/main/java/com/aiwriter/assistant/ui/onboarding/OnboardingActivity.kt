@@ -54,13 +54,15 @@ class OnboardingActivity : ComponentActivity() {
             AIWritingAssistantTheme(darkTheme = isDarkMode) {
                 val startAt = intent.getStringExtra("startAt")
                 val workMode = intent.getStringExtra("workMode")
+                val entryPoint = intent.getStringExtra("entry_point") ?: "first_time"
                 OnboardingScreen(
                     onComplete = {
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
                     },
                     startAt = startAt,
-                    workMode = workMode
+                    workMode = workMode,
+                    entryPoint = entryPoint
                 )
             }
         }
@@ -73,6 +75,7 @@ fun OnboardingScreen(
     onComplete: () -> Unit,
     startAt: String? = null,
     workMode: String? = null,
+    entryPoint: String = "first_time",
     viewModel: OnboardingViewModel = viewModel()
 ) {
     val pageCount = 5
@@ -117,7 +120,14 @@ fun OnboardingScreen(
                 )
                 2 -> PermissionSetupPage(
                     viewModel = viewModel,
-                    onNext = { scope.launch { pagerState.scrollToPage(3) } }
+                    onNext = {
+                        if (entryPoint == "mode_switch") {
+                            viewModel.completeOnboarding()
+                            onComplete()
+                        } else {
+                            scope.launch { pagerState.scrollToPage(3) }
+                        }
+                    }
                 )
                 3 -> ApiConfigurationPage(
                     viewModel = viewModel,

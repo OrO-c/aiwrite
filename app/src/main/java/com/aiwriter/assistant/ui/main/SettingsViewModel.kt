@@ -1,5 +1,6 @@
 package com.aiwriter.assistant.ui.main
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aiwriter.assistant.AIWriterApplication
@@ -58,6 +59,10 @@ class SettingsViewModel : ViewModel() {
     fun updateDarkMode(enabled: Boolean) {
         preferences.isDarkMode = enabled
         _uiState.value = _uiState.value.copy(isDarkMode = enabled)
+        AppCompatDelegate.setDefaultNightMode(
+            if (enabled) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        )
     }
     
     fun updateVibration(enabled: Boolean) {

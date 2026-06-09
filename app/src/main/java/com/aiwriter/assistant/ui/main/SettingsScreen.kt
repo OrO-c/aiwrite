@@ -20,6 +20,7 @@ import androidx.activity.compose.BackHandler
 import android.content.Intent
 import androidx.compose.ui.platform.LocalContext
 import com.aiwriter.assistant.ui.onboarding.OnboardingActivity
+import com.aiwriter.assistant.data.model.ApiConfig
 import com.aiwriter.assistant.data.model.ApiProvider
 import com.aiwriter.assistant.data.model.WorkMode
 
@@ -61,6 +62,7 @@ fun SettingsScreen(
                         viewModel.updateWorkMode(mode)
                         // After switching mode, guide user to permissions setup
                         val intent = Intent(context, OnboardingActivity::class.java).apply {
+                            putExtra("entry_point", "mode_switch")
                             putExtra("startAt", "permissions")
                             putExtra("workMode", mode.name)
                         }

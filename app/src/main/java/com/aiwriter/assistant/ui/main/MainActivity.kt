@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -22,7 +23,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         
         val preferences = AIWriterApplication.instance.preferences
-        
+
+        // Apply night mode before setContent
+        AppCompatDelegate.setDefaultNightMode(
+            if (preferences.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        )
+
         // Check if this is first launch
         if (preferences.isFirstLaunch) {
             startActivity(Intent(this, OnboardingActivity::class.java))
@@ -30,9 +37,8 @@ class MainActivity : ComponentActivity() {
             return
         }
         
-        val isDarkMode = preferences.isDarkMode
         setContent {
-            AIWritingAssistantTheme(darkTheme = isDarkMode) {
+            AIWritingAssistantTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

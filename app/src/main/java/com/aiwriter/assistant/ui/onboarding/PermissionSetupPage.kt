@@ -1,6 +1,7 @@
 package com.aiwriter.assistant.ui.onboarding
 
 import android.app.Activity
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -8,11 +9,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,7 +36,23 @@ fun PermissionSetupPage(
     val activity = context as? Activity
     val selectedMode by viewModel.selectedWorkMode
 
-    // Live permission states (re-evaluated on each composition)
+    // Force re-check permissions when returning from system settings
+    var permissionCheckTick by remember { mutableIntStateOf(0) }
+    val activityLifecycle = (context as? ComponentActivity)?.lifecycle
+    DisposableEffect(activityLifecycle) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                permissionCheckTick++
+            }
+        }
+        activityLifecycle?.addObserver(observer)
+        onDispose { activityLifecycle?.removeObserver(observer) }
+    }
+
+    // Re-read permission states on every recomposition (fast syscall)
+    // permissionCheckTick triggers recomposition when returning from system settings
+    @Suppress("UNUSED_EXPRESSION")
+    permissionCheckTick.let { }
     val hasOverlay = PermissionHelper.hasOverlayPermission(context)
     val hasAccessibility = PermissionHelper.isAccessibilityServiceEnabled(context)
     val hasNotification = PermissionHelper.hasNotificationPermission(context)

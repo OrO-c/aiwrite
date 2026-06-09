@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -41,16 +40,15 @@ fun DashboardScreen(
     val missingPermissions by viewModel.missingPermissions.collectAsState()
     
     // Refresh status from preferences when dashboard becomes visible
-    val currentView = LocalView.current
-    DisposableEffect(currentView) {
-        val lifecycle = (currentView.context as? ComponentActivity)?.lifecycle
+    val activity = context as? ComponentActivity
+    DisposableEffect(activity) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 viewModel.refreshStatus()
             }
         }
-        lifecycle?.addObserver(observer)
-        onDispose { lifecycle?.removeObserver(observer) }
+        activity?.lifecycle?.addObserver(observer)
+        onDispose { activity?.lifecycle?.removeObserver(observer) }
     }
     
     Scaffold(
@@ -218,15 +216,6 @@ private fun QuickActionsCard(
                     icon = Icons.Default.Assignment,
                     label = "管理预设",
                     onClick = onManagePresets,
-                    modifier = Modifier.weight(1f)
-                )
-                
-                Spacer(modifier = Modifier.width(8.dp))
-                
-                QuickActionButton(
-                    icon = Icons.Default.Tune,
-                    label = "模型设置",
-                    onClick = onSettings,
                     modifier = Modifier.weight(1f)
                 )
             }
